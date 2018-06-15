@@ -1,1 +1,3 @@
 env/
+input/
+*.DS_STORE

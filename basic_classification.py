@@ -1,11 +1,10 @@
 import os
-import tarfile
+from pydub import AudioSegment
 
-dest_directory = "speech_commands"
-data_url = "https://storage.cloud.google.com/download.tensorflow.org/data/speech_commands_v0.01.tar.gz"
+sounds_dir = "input/categorized/car_horn" 
+wav_fps = os.listdir(sounds_dir)
 
-if not os.path.exists(dest_directory):
-    os.makedirs(dest_directory)
-
-filepath, _ = urllib.request.urlretrieve(data_url, filepath, _progress)
-tarfile.open(filepath, 'r:gz').extractall(dest_directory)
+for wav in wav_fps:
+    sound = AudioSegment.from_wav(sounds_dir + wav)
+    array = sound.get_array_of_samples()
+    print(array)
