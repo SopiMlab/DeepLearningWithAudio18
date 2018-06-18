@@ -8,10 +8,10 @@ from keras.utils import to_categorical
 from keras.layers import Dense, Dropout, Flatten
 from keras.layers import Conv1D
 
-# folders_dir = "input/speech_commands"
-# sounds_dir = "input/speech_commands/"
-folders_dir = "input/categorized"
-sounds_dir = "input/categorized/" 
+folders_dir = "input/speech_commands"
+sounds_dir = "input/speech_commands/"
+#folders_dir = "input/categorized"
+#sounds_dir = "input/categorized/" 
 num_classes = 10
 
 # Replace with:
@@ -82,7 +82,7 @@ print(x_test.shape[0], 'test samples')
 
 ## DATA LOADING ENDS
 
-batch_size = 3
+batch_size = 30
 epochs = 50
 kernel_size = 5
 # Figure out how many convolutions we can do with custom data, alternatively, let students set this, or do it by hand.
@@ -103,7 +103,7 @@ model.add(Dropout(0.5))
 
 model.add(Dense(num_classes, activation='softmax'))
 model.compile(loss=keras.losses.categorical_crossentropy,
-              optimizer=keras.optimizers.Adam(lr=0.0001),
+              optimizer=keras.optimizers.Adam(),
               metrics=['accuracy'])
 
 model.summary()
