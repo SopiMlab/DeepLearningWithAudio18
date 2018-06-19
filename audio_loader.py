@@ -3,6 +3,7 @@ from keras.utils import to_categorical
 from pydub import AudioSegment
 import numpy as np
 import array
+from playsound import play_sound
 
 def load_audio(foldername, num_classes = 10, framerate = 0, forceLoad=False):
     folders_dir = "input/" + foldername
@@ -68,6 +69,9 @@ def load_audio(foldername, num_classes = 10, framerate = 0, forceLoad=False):
         y_train = to_categorical(y_train)
         y_test = to_categorical(y_test) 
 
+        x_train, y_train = shuffleLists(x_train, y_train)
+        x_test, y_test = shuffleLists(x_train, y_train)
+
         x_train = x_train.reshape(x_train.shape[0], x_train.shape[1], 1)
         x_test = x_test.reshape(x_test.shape[0], x_test.shape[1], 1)
 
@@ -80,3 +84,11 @@ def load_audio(foldername, num_classes = 10, framerate = 0, forceLoad=False):
         print("Saving arrays to file")
         np.savez("input/saved/" + name, x_train,y_train,x_test,y_test)
     return (x_train,y_train),(x_test,y_test)
+
+def shuffleLists(a,b):
+    indices = np.arange(a.shape[0])
+    np.random.shuffle(indices)
+
+    a = a[indices]
+    b = b[indices]
+    return a,b

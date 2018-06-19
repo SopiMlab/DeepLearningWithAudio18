@@ -2,11 +2,11 @@ from audio_tools import count_convolutions
 from audio_loader import load_audio
 import keras
 from keras.layers import Dense, Dropout, Flatten
-from keras.layers import Conv1D
+from keras.layers import Conv1D 
 
 num_classes = 10
 
-(x_train, y_train), (x_test, y_test) = load_audio("speech_commands", num_classes,forceLoad=True)
+(x_train, y_train), (x_test, y_test) = load_audio("speech_commands", num_classes, forceLoad=True)
 
 batch_size = 30
 epochs = 50
