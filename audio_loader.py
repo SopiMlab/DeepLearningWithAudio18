@@ -5,10 +5,10 @@ import numpy as np
 import array
 from playsound import play_sound
 
-def load_audio(foldername, num_classes = 10, framerate = 0, forceLoad=False):
+def load_audio(foldername, num_classes = 10, framerate = 0, forceLoad=False, reshape=True):
     folders_dir = "input/" + foldername
     name = folders_dir[(folders_dir.find("/") + 1):]
-    if os.path.isfile("input/saved/" + name + ".npz") and not forceLoad:
+    if os.path.isfile("input/saved/" + name + ".npz") and not forceLoad and reshape:
         print("Library already loaded!")
         soundlibrary = np.load("input/saved/" + name + ".npz")
         x_train = (soundlibrary['arr_0'])
@@ -66,14 +66,15 @@ def load_audio(foldername, num_classes = 10, framerate = 0, forceLoad=False):
             new_x_test.append(x)
         x_test = np.array(new_x_test)
 
-        y_train = to_categorical(y_train)
+        y_train = to_categorical(y_train) # this is a bit weird for tensorflow purposes
         y_test = to_categorical(y_test) 
 
         x_train, y_train = shuffleLists(x_train, y_train)
         x_test, y_test = shuffleLists(x_train, y_train)
 
-        x_train = x_train.reshape(x_train.shape[0], x_train.shape[1], 1)
-        x_test = x_test.reshape(x_test.shape[0], x_test.shape[1], 1)
+        if(reshape):
+            x_train = x_train.reshape(x_train.shape[0], x_train.shape[1], 1)
+            x_test = x_test.reshape(x_test.shape[0], x_test.shape[1], 1)
 
         print('x_train shape:', x_train.shape)
         print('y_train shape:', y_train.shape)
