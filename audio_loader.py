@@ -83,6 +83,8 @@ def load_audio(foldername, num_classes = 10, framerate = 0, forceLoad=False, res
 
         name = folders_dir[(folders_dir.find("/") + 1):]
         print("Saving arrays to file")
+        if not os.path.exists("input/saved/"):
+            os.makedirs("input/saved/")
         np.savez("input/saved/" + name, x_train,y_train,x_test,y_test)
     return (x_train,y_train),(x_test,y_test)
 
