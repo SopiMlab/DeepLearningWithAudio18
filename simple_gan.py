@@ -44,7 +44,7 @@ class GAN():
         audio = self.generator(z)
 
         # For the combined model we will only train the generator
-        self.discriminator.trainable = True
+        self.discriminator.trainable = False
 
         # The discriminator takes generated audio as input and determines validity
         validity = self.discriminator(audio)
@@ -105,7 +105,9 @@ class GAN():
         valid = np.ones((batch_size, 1))
         fake = np.zeros((batch_size, 1))
 
-        X_train = self.X_TRAIN
+        X_train = self.X_TRAIN / 16000
+
+        play_and_save_sound(X_train, "test")
 
         for epoch in range(epochs):
 
