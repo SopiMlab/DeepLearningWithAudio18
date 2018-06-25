@@ -1,4 +1,5 @@
 env/
 input/
+output/
 *.DS_STORE
 __pycache__/*

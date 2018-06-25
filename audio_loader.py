@@ -66,8 +66,8 @@ def load_audio(foldername, num_classes = 10, framerate = 0, forceLoad=False, res
             new_x_test.append(x)
         x_test = np.array(new_x_test)
 
-        y_train = to_categorical(y_train) # this is a bit weird for tensorflow purposes
-        y_test = to_categorical(y_test) 
+        y_train = to_categorical(y_train) # this is a bit weird for tensorflow purposes, consider leaving this part out.
+        y_test = to_categorical(y_test) # just give them without setting them one-hot.
 
         x_train, y_train = shuffleLists(x_train, y_train)
         x_test, y_test = shuffleLists(x_train, y_train)
