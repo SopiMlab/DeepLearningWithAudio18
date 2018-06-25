@@ -83,14 +83,11 @@ class GAN():
         convolution_layers = count_convolutions(self.audio_shape, self.kernel_size)
 
         model = keras.models.Sequential()
-        model.add(Conv1D(16, kernel_size=self.kernel_size, activation='selu', strides=2, input_shape=self.audio_shape))
-        for i in range(convolution_layers):
-            model.add(Conv1D(32, kernel_size=self.kernel_size, activation='selu', strides=2))
-        model.add(Flatten())
-        model.add(Dropout(0.5))
-        model.add(Dense(32, activation='selu'))
-        model.add(Dropout(0.5))
-
+        model.add(Flatten(input_shape=self.audio_shape))
+        model.add(Dense(512))
+        model.add(LeakyReLU(alpha=0.2))
+        model.add(Dense(256))
+        model.add(LeakyReLU(alpha=0.2))
         model.add(Dense(1, activation='sigmoid'))
         model.summary()
 
