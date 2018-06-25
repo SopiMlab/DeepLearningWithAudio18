@@ -68,7 +68,7 @@ class GAN():
         model.add(Dense(1024))
         model.add(LeakyReLU(alpha=0.2))
         model.add(BatchNormalization(momentum=0.8))
-        model.add(Dense(self.samples, activation='tanh'))
+        model.add(Dense(self.samples))
         model.add(Reshape(self.audio_shape))
 
         model.summary()
