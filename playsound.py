@@ -64,5 +64,5 @@ def upscale_sample(sample):
         new_sample = (sample /scale) * 32767
     else:
         new_sample = sample * 32767
-    check_sample(sample)
+    check_sample(new_sample)
     return new_sample
