@@ -14,11 +14,13 @@ from audio_tools import count_convolutions
 from playsound import play_and_save_sound
 
 import sys
+import os
 
 import numpy as np
 
 class GAN():
     def __init__(self):
+        os.environ["CUDA_VISIBLE_DEVICES"]="0"
         x_train = load_all("categorized", "cat",forceLoad=True)
         self.X_TRAIN = x_train
         self.samples = x_train.shape[1]
@@ -82,13 +84,11 @@ class GAN():
         kernel_size = 5
 
         model = keras.models.Sequential()
-        model.add(Conv1D(16, kernel_size=kernel_size, activation='selu', strides=2, input_shape=self.audio_shape, padding="same"))
-        for i in range(count_convolutions(self.audio_shape,kernel_size)):
-            model.add(Conv1D(32, kernel_size=kernel_size, activation='selu', strides=2,padding="same"))
-        model.add(Flatten())
-        model.add(Dropout(0.5))
-        model.add(Dense(32, activation='selu'))
-        model.add(Dropout(0.5))
+        model.add(Flatten(input_shape=self.audio_shape))
+        model.add(Dense(512))
+        model.add(LeakyReLU(alpha=0.2))
+        model.add(Dense(256))
+        model.add(LeakyReLU(alpha=0.2))
         model.add(Dense(1, activation='sigmoid'))
         model.summary()
 
@@ -148,11 +148,11 @@ class GAN():
         noise = np.random.normal(0, 1, (r * c, self.latent_dim))
         gen_clips = self.generator.predict(noise)
 
-        play_and_save_sound(gen_clips, "generated")
+        play_and_save_sound(gen_clips, "generated", "cat1")
         #play a sound
         print("Play a sound")
 
 
 if __name__ == '__main__':
     gan = GAN()
-    gan.train(epochs=30000, batch_size=32, sample_interval=200)
+    gan.train(epochs=30000, batch_size=32, sample_interval=100)

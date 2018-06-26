@@ -15,7 +15,7 @@ def play_sound(sample, label, upscale=False): # We don't know what the original 
     print("playing sound from category " + str(label))
     play(new_sound)
 
-def play_and_save_sound(samples, label):
+def play_and_save_sound(samples, label, run_name=""):
     check_sample(samples[0])
     #sound = AudioSegment.from_file('input/speech_commands/bed/1bb574f9_nohash_0.wav')
     sound = AudioSegment.from_file('input/categorized/cat/1-34094-A-5.wav')
@@ -25,7 +25,7 @@ def play_and_save_sound(samples, label):
     play(new_sound)
     if not os.path.exists("output/" + label + "/"):
         os.makedirs("output/" + label + "/")
-    new_sound.export("output/" + label + "/" + str(time.time()) + ".wav", format="wav")
+    new_sound.export("output/" + label + "/" + run_name + "#" + str(time.time()) + ".wav", format="wav")
 
 def save_sound(sample, label):
     sound = AudioSegment.from_file('input/speech_commands/bed/1bb574f9_nohash_0.wav')
@@ -36,16 +36,33 @@ def save_sound(sample, label):
     new_sound.export("output/" + name, format="wav")
 
 def check_sample (sample):
-    min = 10000
-    max = 0
+    mini = 10000
+    maxi = 0
     for i in sample:
-        if(i < min):
-            min = i
-        if(i > max):
-            max = i
-    print("max wads " + str(max))
-    print("min was :" + str(min))
+        if(i < mini):
+            mini = i
+        if(i > maxi):
+            maxi = i
+    print("max was " + str(maxi))
+    print("min was " + str(mini))
+
+def check_scale (sample):
+    mini = 10000
+    maxi = 0
+    for i in sample:
+        if(i < mini):
+            mini = i
+        if(i > maxi):
+            maxi = i
+    return max(abs(maxi), abs(mini))
     
 def upscale_sample(sample):
-    check_sample(sample * 16000)
-    return sample * 16000
+    check_sample(sample)
+    scale = check_scale(sample)
+    print("scale {}".format(scale))
+    if(scale > 1):
+        new_sample = (sample /scale) * 32767
+    else:
+        new_sample = sample * 32767
+    check_sample(sample)
+    return new_sample
