@@ -9,19 +9,19 @@ os.environ["CUDA_VISIBLE_DEVICES"]="0"
 
 num_classes = 10
 
-(x_train, y_train), (x_test, y_test) = load_audio("speech_commands", num_classes)
+(x_train, y_train), (x_test, y_test) = load_audio("speech_commands", num_classes, forceload=True)
 
 batch_size = 30
 epochs = 50
-kernel_size = 10
+kernel_size = 5
 
 input_shape = (x_train.shape[1],1)
 convolution_layers = count_convolutions(input_shape, kernel_size)
 
 model = keras.models.Sequential()
-model.add(Conv1D(16, kernel_size=kernel_size, activation='selu', strides=2, input_shape=input_shape))
+model.add(Conv1D(16, kernel_size=kernel_size, activation='selu', strides=2, input_shape=input_shape, padding="same"))
 for i in range(convolution_layers + 1):
-    model.add(Conv1D(32, kernel_size=kernel_size, activation='selu', strides=2))
+    model.add(Conv1D(32, kernel_size=kernel_size, activation='selu', strides=2,padding="same"))
 model.add(Flatten())
 model.add(Dropout(0.5))
 model.add(Dense(32, activation='selu'))
