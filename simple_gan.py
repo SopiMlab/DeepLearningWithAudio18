@@ -79,14 +79,16 @@ class GAN():
 
     def build_discriminator(self):
 
-        convolution_layers = count_convolutions(self.audio_shape, self.kernel_size)
+        kernel_size = 5
 
         model = keras.models.Sequential()
-        model.add(Flatten(input_shape=self.audio_shape))
-        model.add(Dense(512))
-        model.add(LeakyReLU(alpha=0.2))
-        model.add(Dense(256))
-        model.add(LeakyReLU(alpha=0.2))
+        model.add(Conv1D(16, kernel_size=kernel_size, activation='selu', strides=2, input_shape=self.audio_shape, padding="same"))
+        for i in range(count_convolutions(self.audio_shape,kernel_size)):
+            model.add(Conv1D(32, kernel_size=kernel_size, activation='selu', strides=2,padding="same"))
+        model.add(Flatten())
+        model.add(Dropout(0.5))
+        model.add(Dense(32, activation='selu'))
+        model.add(Dropout(0.5))
         model.add(Dense(1, activation='sigmoid'))
         model.summary()
 
