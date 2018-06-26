@@ -3,7 +3,7 @@ from keras.utils import to_categorical
 from pydub import AudioSegment
 import numpy as np
 import array
-from playsound import play_sound
+from playsound import check_sample
 
 def load_audio(foldername, num_classes = 10, framerate = 0, forceLoad=False, reshape=True):
     folders_dir = "input/" + foldername
@@ -95,3 +95,51 @@ def shuffleLists(a,b):
     a = a[indices]
     b = b[indices]
     return a,b
+
+def load_all(foldername, categoryname ="",framerate = 0, forceLoad=False, reshape=True):
+    folders_dir = "input/" + foldername + "/" + categoryname
+    name = foldername + categoryname
+    if os.path.isfile("input/saved/" + name + ".npz") and not forceLoad and reshape:
+        print("Library already loaded!")
+        soundlibrary = np.load("input/saved/" + name + ".npz")
+        x_train = (soundlibrary['arr_0'])
+    else:
+        x_train = []
+        wavs = os.listdir(folders_dir)
+        for wav in wavs:
+            sound = AudioSegment.from_wav(folders_dir + "/" + wav)
+            if framerate != 0:
+                sound = sound.set_frame_rate(sound.frame_rate // framerate) # check frame rate and do this based on that. Silly to hard code.
+            sound = sound.set_channels(1) 
+            soundarray = sound.get_array_of_samples()
+            nparray = np.array(soundarray)
+            x_train.append(nparray)
+
+        # Get longest clip from the data.
+        max = 0
+        for x in x_train:
+            if len(x) > max:
+                max = len(x)
+
+        # Pad data with zeroes so that all clips are the same length for convolution
+        new_x_train = []
+        for x in x_train:
+            if len(x) < max:
+                x = np.pad(x, (0, max-len(x)), mode='constant')
+            new_x_train.append(x)
+        x_train = np.array(new_x_train)
+
+        if(reshape):
+            x_train = x_train.reshape(x_train.shape[0], x_train.shape[1], 1)
+
+        print('x_train shape:', x_train.shape)
+        print(x_train.shape[0], 'train samples')
+
+        # for x in x_train:
+        #     check_sample(x)
+
+        print("Saving arrays to file")
+        if not os.path.exists("input/saved/"):
+            os.makedirs("input/saved/")
+        np.savez("input/saved/" + name, x_train)
+    return x_train

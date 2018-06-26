@@ -5,7 +5,8 @@ import time
 import os
 
 def play_sound(sample, label, upscale=False): # We don't know what the original file was like at this point anymore. AKA length and framerate. This works for now
-    sound = AudioSegment.from_file('input/speech_commands/bed/1bb574f9_nohash_0.wav')
+    #sound = AudioSegment.from_file('input/speech_commands/bed/1bb574f9_nohash_0.wav')
+    sound = AudioSegment.from_file('input/categorized/cat/1-34094-A-5.wav')
     playsound = sample[0]
     if upscale:
         playsound = upscale_sample(playsound)
@@ -16,7 +17,8 @@ def play_sound(sample, label, upscale=False): # We don't know what the original 
 
 def play_and_save_sound(samples, label):
     check_sample(samples[0])
-    sound = AudioSegment.from_file('input/speech_commands/bed/1bb574f9_nohash_0.wav')
+    #sound = AudioSegment.from_file('input/speech_commands/bed/1bb574f9_nohash_0.wav')
+    sound = AudioSegment.from_file('input/categorized/cat/1-34094-A-5.wav')
     shifted_samples_array = array.array(sound.array_type, upscale_sample(samples[0]))
     new_sound = sound._spawn(shifted_samples_array)
     print("playing and saving sound from category " + str(label))
