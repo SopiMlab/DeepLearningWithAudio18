@@ -9,7 +9,7 @@ from keras.layers.advanced_activations import LeakyReLU
 from keras.layers.convolutional import UpSampling2D, Conv1D
 from keras.models import Sequential, Model
 from keras.optimizers import Adam
-from audio_loader import load_audio
+from audio_loader import load_all
 from audio_tools import count_convolutions
 from playsound import play_and_save_sound
 
@@ -19,8 +19,7 @@ import numpy as np
 
 class GAN():
     def __init__(self):
-        self.num_classes = 10
-        (x_train, y_train), (x_test, y_test) = load_audio("speech_commands", self.num_classes)
+        x_train = load_all("categorized", "cat",forceLoad=True)
         self.X_TRAIN = x_train
         self.samples = x_train.shape[1]
         self.channels = 1
@@ -102,7 +101,7 @@ class GAN():
         valid = np.ones((batch_size, 1))
         fake = np.zeros((batch_size, 1))
 
-        X_train = self.X_TRAIN / 16000
+        X_train = self.X_TRAIN / 32767
 
         play_and_save_sound(X_train, "test")
 
