@@ -10,7 +10,7 @@ num_classes = 10
 
 batch_size = 30
 epochs = 50
-kernel_size = 5
+kernel_size = 25
 
 input_shape = (x_train.shape[1],1)
 convolution_layers = count_convolutions(input_shape, kernel_size)
