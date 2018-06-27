@@ -8,21 +8,51 @@ from __future__ import print_function, division
 
 from keras.datasets import mnist
 from keras.layers.merge import _Merge
-from keras.layers import Input, Dense, Reshape, Flatten, Dropout
+from keras.layers import Input, Dense, Reshape, Flatten, Dropout, Lambda, Layer
 from keras.layers import BatchNormalization, Activation, ZeroPadding2D
 from keras.layers.advanced_activations import LeakyReLU
-from keras.layers.convolutional import UpSampling2D, Conv2D
+from keras.layers.convolutional import UpSampling2D, Conv1D, Conv2DTranspose
 from keras.models import Sequential, Model
 from keras.optimizers import RMSprop
 from functools import partial
+from audio_loader import load_all
+from audio_tools import count_convolutions
 
 import keras.backend as K
 
 import matplotlib.pyplot as plt
 
 import sys
+import os
+import keras
 
 import numpy as np
+
+class Conv1DTranspose(Layer):
+    def __init__(self, filters, kernel_size, strides=1, *args, **kwargs):
+        self._filters = filters
+        self._kernel_size = (1, kernel_size)
+        self._strides = (1, strides)
+        self._args, self._kwargs = args, kwargs
+        super(Conv1DTranspose, self).__init__()
+
+    def build(self, input_shape):
+        print("build", input_shape)
+        self._model = Sequential()
+        self._model.add(Lambda(lambda x: K.expand_dims(x,axis=1), batch_input_shape=input_shape))
+        self._model.add(Conv2DTranspose(self._filters,
+                                        kernel_size=self._kernel_size,
+                                        strides=self._strides,
+                                        *self._args, **self._kwargs))
+        self._model.add(Lambda(lambda x: x[:,0]))
+        self._model.summary()
+        super(Conv1DTranspose, self).build(input_shape)
+
+    def call(self, x):
+        return self._model(x)
+
+    def compute_output_shape(self, input_shape):
+        return self._model.compute_output_shape(input_shape)
 
 class RandomWeightedAverage(_Merge):
     """Provides a (random) weighted average between real and generated image samples"""
@@ -32,10 +62,13 @@ class RandomWeightedAverage(_Merge):
 
 class WGANGP():
     def __init__(self):
-        self.img_rows = 28
-        self.img_cols = 28
+        os.environ["CUDA_VISIBLE_DEVICES"]="0"
+        x_train = load_all("categorized", "cat",forceLoad=True)
+        self.X_TRAIN = x_train
+        self.samples = x_train.shape[1]
         self.channels = 1
-        self.img_shape = (self.img_rows, self.img_cols, self.channels)
+        self.kernel_size = 5
+        self.audio_shape = (self.samples, self.channels)
         self.latent_dim = 100
 
         # Following parameter and optimizer set as recommended in paper
@@ -55,29 +88,29 @@ class WGANGP():
         self.generator.trainable = False
 
         # Image input (real sample)
-        real_img = Input(shape=self.img_shape)
+        real_clip = Input(shape=self.audio_shape)
 
         # Noise input
         z_disc = Input(shape=(100,))
         # Generate image based of noise (fake sample)
-        fake_img = self.generator(z_disc)
+        fake_clip = self.generator(z_disc)
 
         # Discriminator determines validity of the real and fake images
-        fake = self.critic(fake_img)
-        valid = self.critic(real_img)
+        fake = self.critic(fake_clip)
+        valid = self.critic(real_clip)
 
         # Construct weighted average between real and fake images
-        interpolated_img = RandomWeightedAverage()([real_img, fake_img])
+        interpolated_clip = RandomWeightedAverage()([real_clip, fake_clip])
         # Determine validity of weighted sample
-        validity_interpolated = self.critic(interpolated_img)
+        validity_interpolated = self.critic(interpolated_clip)
 
         # Use Python partial to provide loss function with additional
         # 'averaged_samples' argument
         partial_gp_loss = partial(self.gradient_penalty_loss,
-                          averaged_samples=interpolated_img)
+                          averaged_samples=interpolated_clip)
         partial_gp_loss.__name__ = 'gradient_penalty' # Keras requires function names
 
-        self.critic_model = Model(inputs=[real_img, z_disc],
+        self.critic_model = Model(inputs=[real_clip, z_disc],
                             outputs=[valid, fake, validity_interpolated])
         self.critic_model.compile(loss=[self.wasserstein_loss,
                                               self.wasserstein_loss,
@@ -128,19 +161,15 @@ class WGANGP():
     def build_generator(self):
 
         model = Sequential()
+        dim = 64
 
-        model.add(Dense(128 * 7 * 7, activation="relu", input_dim=self.latent_dim))
-        model.add(Reshape((7, 7, 128)))
-        model.add(UpSampling2D())
-        model.add(Conv2D(128, kernel_size=4, padding="same"))
-        model.add(BatchNormalization(momentum=0.8))
-        model.add(Activation("relu"))
-        model.add(UpSampling2D())
-        model.add(Conv2D(64, kernel_size=4, padding="same"))
-        model.add(BatchNormalization(momentum=0.8))
-        model.add(Activation("relu"))
-        model.add(Conv2D(self.channels, kernel_size=4, padding="same"))
-        model.add(Activation("tanh"))
+        convolution_layers = count_convolutions(self.audio_shape, self.kernel_size)
+
+        model.add(Dense(4 * 4* dim * 16, input_shape=self.audio_shape))
+        model.add(Reshape([32,16,dim*16]))
+        model.add(BatchNormalization)
+
+
 
         model.summary()
 
@@ -153,31 +182,24 @@ class WGANGP():
 
         model = Sequential()
 
-        model.add(Conv2D(16, kernel_size=3, strides=2, input_shape=self.img_shape, padding="same"))
-        model.add(LeakyReLU(alpha=0.2))
-        model.add(Dropout(0.25))
-        model.add(Conv2D(32, kernel_size=3, strides=2, padding="same"))
-        model.add(ZeroPadding2D(padding=((0,1),(0,1))))
-        model.add(BatchNormalization(momentum=0.8))
-        model.add(LeakyReLU(alpha=0.2))
-        model.add(Dropout(0.25))
-        model.add(Conv2D(64, kernel_size=3, strides=2, padding="same"))
-        model.add(BatchNormalization(momentum=0.8))
-        model.add(LeakyReLU(alpha=0.2))
-        model.add(Dropout(0.25))
-        model.add(Conv2D(128, kernel_size=3, strides=1, padding="same"))
-        model.add(BatchNormalization(momentum=0.8))
-        model.add(LeakyReLU(alpha=0.2))
-        model.add(Dropout(0.25))
+        convolution_layers = count_convolutions(self.audio_shape, self.kernel_size)
+
+        model = keras.models.Sequential()
+        model.add(Conv1D(16, kernel_size=self.kernel_size, activation='selu', strides=2, input_shape=self.audio_shape, padding="same"))
+        for i in range(convolution_layers):
+            model.add(Conv1D(32, kernel_size=self.kernel_size, activation='selu', strides=2,padding="same"))
         model.add(Flatten())
+        model.add(Dropout(0.5))
+        model.add(Dense(32, activation='selu'))
+        model.add(Dropout(0.5))
         model.add(Dense(1))
 
         model.summary()
 
-        img = Input(shape=self.img_shape)
-        validity = model(img)
+        clip = Input(shape=self.audio_shape)
+        validity = model(clip)
 
-        return Model(img, validity)
+        return Model(clip, validity)
 
     def train(self, epochs, batch_size, sample_interval=50):
 
@@ -220,25 +242,16 @@ class WGANGP():
 
             # If at save interval => save generated image samples
             if epoch % sample_interval == 0:
-                self.sample_images(epoch)
+                self.sample_clips(epoch)
 
-    def sample_images(self, epoch):
+    def sample_clips(self, epoch):
         r, c = 5, 5
         noise = np.random.normal(0, 1, (r * c, self.latent_dim))
-        gen_imgs = self.generator.predict(noise)
+        gen_clips = self.generator.predict(noise)
 
-        # Rescale images 0 - 1
-        gen_imgs = 0.5 * gen_imgs + 1
-
-        fig, axs = plt.subplots(r, c)
-        cnt = 0
-        for i in range(r):
-            for j in range(c):
-                axs[i,j].imshow(gen_imgs[cnt, :,:,0], cmap='gray')
-                axs[i,j].axis('off')
-                cnt += 1
-        fig.savefig("images/mnist_%d.png" % epoch)
-        plt.close()
+        play_and_save_sound(gen_clips, "generated", "cat1", epoch)
+        #play a sound
+        print("Play a sound")
 
 
 if __name__ == '__main__':
