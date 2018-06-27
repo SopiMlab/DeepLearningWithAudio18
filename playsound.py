@@ -15,7 +15,7 @@ def play_sound(sample, label, upscale=False): # We don't know what the original 
     print("playing sound from category " + str(label))
     play(new_sound)
 
-def play_and_save_sound(samples, label, run_name=""):
+def play_and_save_sound(samples, label, run_name="", epoch=0):
     check_sample(samples[0])
     #sound = AudioSegment.from_file('input/speech_commands/bed/1bb574f9_nohash_0.wav')
     sound = AudioSegment.from_file('input/categorized/cat/1-34094-A-5.wav')
@@ -25,7 +25,7 @@ def play_and_save_sound(samples, label, run_name=""):
     play(new_sound)
     if not os.path.exists("output/" + label + "/"):
         os.makedirs("output/" + label + "/")
-    new_sound.export("output/" + label + "/" + run_name + "#" + str(time.time()) + ".wav", format="wav")
+    new_sound.export("output/" + label + "/" + run_name + "#" + str(epoch) + ".wav", format="wav")
 
 def save_sound(sample, label):
     sound = AudioSegment.from_file('input/speech_commands/bed/1bb574f9_nohash_0.wav')

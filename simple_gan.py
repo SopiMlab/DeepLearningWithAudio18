@@ -148,7 +148,7 @@ class GAN():
         noise = np.random.normal(0, 1, (r * c, self.latent_dim))
         gen_clips = self.generator.predict(noise)
 
-        play_and_save_sound(gen_clips, "generated", "cat1")
+        play_and_save_sound(gen_clips, "generated", "cat1", epoch)
         #play a sound
         print("Play a sound")
 

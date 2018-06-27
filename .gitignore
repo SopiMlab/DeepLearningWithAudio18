@@ -1,5 +1,6 @@
 env/
 input/
 output/
+images/
 *.DS_STORE
 __pycache__/*
