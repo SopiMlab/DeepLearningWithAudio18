@@ -71,6 +71,7 @@ class GAN():
         model.add(BatchNormalization(momentum=0.8))
         model.add(Dense(self.samples))
         model.add(Reshape(self.audio_shape))
+        model.add(Activation("tanh")) # this should fix the runaway number issue?
 
         model.summary()
 

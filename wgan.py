@@ -64,7 +64,7 @@ class RandomWeightedAverage(_Merge):
 class WGANGP():
     def __init__(self):
         os.environ["CUDA_VISIBLE_DEVICES"]="0"
-        x_train = load_all("categorized", "cat",forceLoad=True,framerate=1)
+        x_train = load_all("categorized", "cat",forceLoad=True,framerate=32768)
         self.X_TRAIN = x_train
         self.samples = x_train.shape[1]
         self.channels = 1

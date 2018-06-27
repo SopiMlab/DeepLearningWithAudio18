@@ -30,7 +30,8 @@ def load_audio(foldername, num_classes = 10, framerate = 0, forceLoad=False, res
             for j in range(0,trainamount):
                 sound = AudioSegment.from_wav(folder + wav_fps[j])
                 if framerate != 0:
-                    sound = sound.set_frame_rate(sound.frame_rate // framerate) # check frame rate and do this based on that. Silly to hard code.
+                    #print("I WANT TO STAND OUT AND SHOW YOU THE FRAME RATE: " + str(sound.frame_rate))
+                    sound = sound.set_frame_rate(framerate) # check frame rate and do this based on that. Silly to hard code.
                 sound = sound.set_channels(1) 
                 soundarray = sound.get_array_of_samples()
                 nparray = np.array(soundarray)
@@ -39,7 +40,7 @@ def load_audio(foldername, num_classes = 10, framerate = 0, forceLoad=False, res
             for j in range(trainamount,len(wav_fps)):
                 sound = AudioSegment.from_wav(folder + wav_fps[j])
                 if framerate != 0:
-                    sound = sound.set_frame_rate(sound.frame_rate // framerate) # check frame rate and do this based on that. Silly to hard code.
+                    sound = sound.set_frame_rate(framerate) # check frame rate and do this based on that. Silly to hard code.
                 soundarray = sound.get_array_of_samples()
                 nparray = np.array(soundarray)
                 x_test.append(nparray)
@@ -109,7 +110,7 @@ def load_all(foldername, categoryname ="",framerate = 0, forceLoad=False, reshap
         for wav in wavs:
             sound = AudioSegment.from_wav(folders_dir + "/" + wav)
             if framerate != 0:
-                sound = sound.set_frame_rate(32768) # check frame rate and do this based on that. Silly to hard code.
+                sound = sound.set_frame_rate(framerate) # check frame rate and do this based on that. Silly to hard code.
                 #sprint("I WANT TO STAND OUT AND SHOW YOU THE FRAME RATE: " + str(sound.frame_rate*sound.duration_seconds))
             sound = sound.set_channels(1) 
             soundarray = sound.get_array_of_samples()
