@@ -4,4 +4,4 @@ def count_convolutions(input_shape, kernel_size):
     while x > kernel_size:
         x = x/2
         count += 1
-    return count - 3
+    return count - 2

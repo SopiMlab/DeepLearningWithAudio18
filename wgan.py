@@ -17,6 +17,7 @@ from keras.optimizers import RMSprop
 from functools import partial
 from audio_loader import load_all
 from audio_tools import count_convolutions
+from playsound import play_and_save_sound
 
 import keras.backend as K
 
@@ -37,7 +38,7 @@ class Conv1DTranspose(Layer):
         super(Conv1DTranspose, self).__init__()
 
     def build(self, input_shape):
-        print("build", input_shape)
+        #print("build", input_shape)
         self._model = Sequential()
         self._model.add(Lambda(lambda x: K.expand_dims(x,axis=1), batch_input_shape=input_shape))
         self._model.add(Conv2DTranspose(self._filters,
@@ -57,13 +58,13 @@ class Conv1DTranspose(Layer):
 class RandomWeightedAverage(_Merge):
     """Provides a (random) weighted average between real and generated image samples"""
     def _merge_function(self, inputs):
-        alpha = K.random_uniform((32, 1, 1, 1))
+        alpha = K.random_uniform((32, 1, 1))
         return (alpha * inputs[0]) + ((1 - alpha) * inputs[1])
 
 class WGANGP():
     def __init__(self):
         os.environ["CUDA_VISIBLE_DEVICES"]="0"
-        x_train = load_all("categorized", "cat",forceLoad=True)
+        x_train = load_all("categorized", "cat",forceLoad=True,framerate=1)
         self.X_TRAIN = x_train
         self.samples = x_train.shape[1]
         self.channels = 1
@@ -102,6 +103,8 @@ class WGANGP():
         # Construct weighted average between real and fake images
         interpolated_clip = RandomWeightedAverage()([real_clip, fake_clip])
         # Determine validity of weighted sample
+        print("Look at meeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee:") 
+        print(interpolated_clip)
         validity_interpolated = self.critic(interpolated_clip)
 
         # Use Python partial to provide loss function with additional
@@ -162,21 +165,29 @@ class WGANGP():
 
         model = Sequential()
         dim = 64
+        kernel_len = 25
 
-        convolution_layers = count_convolutions(self.audio_shape, self.kernel_size)
+        #convolution_layers = count_convolutions(self.audio_shape, self.kernel_size)
+        convolution_layers = 3
 
-        model.add(Dense(4 * 4* dim * 16, input_shape=self.audio_shape))
-        model.add(Reshape([32,16,dim*16]))
-        model.add(BatchNormalization)
-
-
+        model.add(Dense(1280 * 16, input_dim=self.latent_dim))
+        model.add(Reshape((1280,16)))
+        model.add(BatchNormalization())
+        model.add(Activation("relu"))
+        for i in range(convolution_layers):
+            model.add(Conv1DTranspose(filters=32, kernel_size=kernel_len, strides = 4, padding="same"))
+            model.add(BatchNormalization())
+            model.add(Activation("relu"))
+        model.add(Conv1DTranspose(filters=1, kernel_size=kernel_len, strides = 2, padding="same"))
+        model.add(BatchNormalization())
+        model.add(Activation("tanh"))
 
         model.summary()
 
         noise = Input(shape=(self.latent_dim,))
-        img = model(noise)
+        clip = model(noise)
 
-        return Model(noise, img)
+        return Model(noise, clip)
 
     def build_critic(self):
 
@@ -184,7 +195,10 @@ class WGANGP():
 
         convolution_layers = count_convolutions(self.audio_shape, self.kernel_size)
 
+        input_shape = (self.audio_shape[1],1)
+
         model = keras.models.Sequential()
+
         model.add(Conv1D(16, kernel_size=self.kernel_size, activation='selu', strides=2, input_shape=self.audio_shape, padding="same"))
         for i in range(convolution_layers):
             model.add(Conv1D(32, kernel_size=self.kernel_size, activation='selu', strides=2,padding="same"))
@@ -204,11 +218,7 @@ class WGANGP():
     def train(self, epochs, batch_size, sample_interval=50):
 
         # Load the dataset
-        (X_train, _), (_, _) = mnist.load_data()
-
-        # Rescale -1 to 1
-        X_train = (X_train.astype(np.float32) - 127.5) / 127.5
-        X_train = np.expand_dims(X_train, axis=3)
+        X_train = self.X_TRAIN / 32767
 
         # Adversarial ground truths
         valid = -np.ones((batch_size, 1))
@@ -249,11 +259,11 @@ class WGANGP():
         noise = np.random.normal(0, 1, (r * c, self.latent_dim))
         gen_clips = self.generator.predict(noise)
 
-        play_and_save_sound(gen_clips, "generated", "cat1", epoch)
+        play_and_save_sound(gen_clips, "wgan", "cat", epoch)
         #play a sound
         print("Play a sound")
 
 
 if __name__ == '__main__':
     wgan = WGANGP()
-    wgan.train(epochs=30000, batch_size=32, sample_interval=100)
+    wgan.train(epochs=30000, batch_size=32, sample_interval=20)
