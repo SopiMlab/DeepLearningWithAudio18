@@ -21,7 +21,7 @@ import numpy as np
 class GAN():
     def __init__(self):
         os.environ["CUDA_VISIBLE_DEVICES"]="0"
-        x_train = load_all("categorized", "cat",forceLoad=True)
+        x_train = load_all("categorized", "chainsaw",forceLoad=True)
         self.X_TRAIN = x_train
         self.samples = x_train.shape[1]
         self.channels = 1
@@ -71,7 +71,7 @@ class GAN():
         model.add(BatchNormalization(momentum=0.8))
         model.add(Dense(self.samples))
         model.add(Reshape(self.audio_shape))
-        model.add(Activation("tanh")) # this should fix the runaway number issue?
+        #model.add(Activation("tanh")) # this should fix the runaway number issue? Oh, but it warps the sound in a stupid way
 
         model.summary()
 
@@ -106,7 +106,7 @@ class GAN():
 
         X_train = self.X_TRAIN / 32767
 
-        play_and_save_sound(X_train, "test")
+        play_and_save_sound(X_train, "simplegan", "reference")
 
         for epoch in range(epochs):
 
@@ -149,7 +149,7 @@ class GAN():
         noise = np.random.normal(0, 1, (r * c, self.latent_dim))
         gen_clips = self.generator.predict(noise)
 
-        play_and_save_sound(gen_clips, "generated", "cat1", epoch)
+        play_and_save_sound(gen_clips, "simplegan", "chainsawpic", epoch)
         #play a sound
         print("Play a sound")
 

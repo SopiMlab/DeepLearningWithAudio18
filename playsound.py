@@ -1,5 +1,6 @@
 from pydub import AudioSegment
 from pydub.playback import play
+import matplotlib.pyplot as plt
 import array
 import time
 import os
@@ -19,8 +20,15 @@ def play_and_save_sound(samples, label, run_name="", epoch=0):
     check_sample(samples[0])
     #sound = AudioSegment.from_file('input/speech_commands/bed/1bb574f9_nohash_0.wav')
     sound = AudioSegment.from_file('input/categorized/cat/1-34094-A-5.wav')
-    shifted_samples_array = array.array(sound.array_type, upscale_sample(samples[0]))
-    new_sound = sound._spawn(shifted_samples_array)
+    sound.set_channels(1)
+    print(sound.array_type)
+    upscaled_array = array.array(sound.array_type, upscale_sample(samples[0]))
+    new_sound = sound._spawn(upscaled_array)
+    #print(upscaled_array)
+    plt.plot(upscaled_array)
+    plt.savefig("output/" + label + "/" + run_name + "#" + str(epoch))
+    plt.clf()
+    plt.cla()
     print("playing and saving sound from category " + str(label))
     play(new_sound)
     if not os.path.exists("output/" + label + "/"):
@@ -62,6 +70,7 @@ def upscale_sample(sample):
     print("scale {}".format(scale))
     if(scale > 1):
         new_sample = (sample /scale) * 32767
+        print("went over 1, this should be impossible")
     else:
         new_sample = sample * 32767
     check_sample(new_sample)

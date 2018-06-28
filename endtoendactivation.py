@@ -7,7 +7,8 @@ import numpy as np
 from playsound import play_sound, play_and_save_sound
 
 latent_dim = 100
-sound = AudioSegment.from_wav("input/speech_commands/bird/0a7c2a8d_nohash_1.wav")
+sound = AudioSegment.from_file('input/categorized/cat/1-34094-A-5.wav')
+#sound = AudioSegment.from_wav("input/speech_commands/bird/0a7c2a8d_nohash_1.wav")
 samples = int(sound.frame_count())
 sound = sound.set_channels(1) 
 soundarray = sound.get_array_of_samples()
@@ -24,7 +25,7 @@ play_sound(target, "original")
 
 model = Sequential()
 
-model.add(Activation("selu", input_shape=input_shape))
+model.add(Activation("tanh", input_shape=input_shape))
 
 model.summary()
 

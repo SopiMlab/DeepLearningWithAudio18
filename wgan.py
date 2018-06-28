@@ -64,7 +64,7 @@ class RandomWeightedAverage(_Merge):
 class WGANGP():
     def __init__(self):
         os.environ["CUDA_VISIBLE_DEVICES"]="0"
-        x_train = load_all("categorized", "cat",forceLoad=True,framerate=32768)
+        x_train = load_all("categorized", "clapping",forceLoad=True,framerate=32768)
         self.X_TRAIN = x_train
         self.samples = x_train.shape[1]
         self.channels = 1
@@ -173,11 +173,11 @@ class WGANGP():
         model.add(Dense(1280 * 16, input_dim=self.latent_dim))
         model.add(Reshape((1280,16)))
         model.add(BatchNormalization())
-        model.add(Activation("relu"))
+        model.add(Activation("selu"))
         for i in range(convolution_layers):
             model.add(Conv1DTranspose(filters=32, kernel_size=kernel_len, strides = 4, padding="same"))
             model.add(BatchNormalization())
-            model.add(Activation("relu"))
+            model.add(Activation("selu"))
         model.add(Conv1DTranspose(filters=1, kernel_size=kernel_len, strides = 2, padding="same"))
         model.add(BatchNormalization())
         model.add(Activation("tanh"))
@@ -236,7 +236,8 @@ class WGANGP():
                 idx = np.random.randint(0, X_train.shape[0], batch_size)
                 imgs = X_train[idx]
                 # Sample generator input
-                noise = np.random.normal(0, 1, (batch_size, self.latent_dim))
+                #noise = np.zeros((self.latent_dim,1))
+                noise = np.random.normal(0, 0.01, (batch_size, self.latent_dim))
                 # Train the critic
                 d_loss = self.critic_model.train_on_batch([imgs, noise],
                                                                 [valid, fake, dummy])
@@ -256,10 +257,11 @@ class WGANGP():
 
     def sample_clips(self, epoch):
         r, c = 5, 5
-        noise = np.random.normal(0, 1, (r * c, self.latent_dim))
+        #noise = np.zeros(self.latent_dim)
+        noise = np.random.normal(0, 0.01, (r * c, self.latent_dim))
         gen_clips = self.generator.predict(noise)
 
-        play_and_save_sound(gen_clips, "wgan", "cat", epoch)
+        play_and_save_sound(gen_clips, "wgan", "clap", epoch)
         #play a sound
         print("Play a sound")
 
