@@ -48,8 +48,8 @@ def save_sound(sample, label):
     new_sound.export("output/" + name, format="wav")
 
 def check_sample (sample):
-    mini = 10000
-    maxi = 0
+    mini = 32000
+    maxi = -32000
     for i in sample:
         if(i < mini):
             mini = i
@@ -72,10 +72,7 @@ def upscale_sample(sample):
     check_sample(sample)
     scale = check_scale(sample)
     print("scale {}".format(scale))
-    if(scale > 0.5): # this is a terrible approach that makes no sense. Also it shouldn't get over the limit anyway. But it does, so no wonder the GAN goes nuts.
-        new_sample = (sample /scale) * 32768
-        print("went over 1, this should be impossible")
-    else:
-        new_sample = sample * 65536
+    new_sample = sample - 0.5
+    new_sample = new_sample * 65536
     check_sample(new_sample)
     return new_sample.astype(int)
