@@ -38,7 +38,7 @@ class Conv1DTranspose(Layer):
         return self._model.compute_output_shape(input_shape)
 
 latent_dim = 100
-sound = load_all("categorized", "cat",forceLoad=True)
+sound = load_all("categorized", "cat",forceLoad=True,framerate=32768)
 
 #play_and_save_sound(sound, "mimic", "original", upscale=False)
 
