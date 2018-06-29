@@ -12,7 +12,7 @@ latent_dim = 100
 #sound = AudioSegment.from_wav("input/speech_commands/bird/0a7c2a8d_nohash_1.wav")
 sound = load_all("categorized", "cat",forceLoad=True)
 
-#play_and_save_sound(sound, "endtoend2", "original", upscale=False)
+play_and_save_sound(sound, "endtoend2", "original", upscale=False)
 
 sound = sound / 65536
 sound = sound + 0.5
@@ -22,13 +22,13 @@ print(target.shape)
 input_shape = (1,target.shape[0])
 print(input_shape)
 
-#play_and_save_sound(sound, "endtoend2", "normalized", upscale=True)
+play_and_save_sound(sound, "endtoend2", "normalized", upscale=True)
 
 model = Sequential()
 
 model.add(Activation("relu", input_shape=input_shape))
 #model.add(Conv1D(32, kernel_size=5, activation='selu', strides=2,padding="same"))
-model.add(UpSampling1D())
+#model.add(UpSampling1D())
 #model.add(Flatten())
 
 model.summary()

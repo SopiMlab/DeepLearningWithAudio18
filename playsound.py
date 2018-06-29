@@ -72,7 +72,7 @@ def upscale_sample(sample):
     check_sample(sample)
     scale = check_scale(sample)
     print("scale {}".format(scale))
-    new_sample = sample - 0.5
-    new_sample = new_sample * 65536
+    new_sample = sample * 65536
+    new_sample = new_sample - 32768
     check_sample(new_sample)
     return new_sample.astype(int)
