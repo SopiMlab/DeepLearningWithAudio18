@@ -12,6 +12,7 @@ latent_dim = 100
 #sound = AudioSegment.from_wav("input/speech_commands/bird/0a7c2a8d_nohash_1.wav")
 sound = load_all("categorized", "cat",forceLoad=True)
 sound = sound / 65536
+sound = sound - 0.5
 target = np.array(sound[0])
 print(target.shape)
 
