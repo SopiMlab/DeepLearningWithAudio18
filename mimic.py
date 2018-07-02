@@ -40,10 +40,13 @@ class Conv1DTranspose(Layer):
 latent_dim = 100
 sound = load_all("categorized", "cat",forceLoad=True,framerate=32768)
 
-#play_and_save_sound(sound, "mimic", "original", upscale=False)
-
+play_and_save_sound(sound, "mimic", "original", upscale=False)
+print("hows the sound")
+print(len(sound[0]))
 sound = sound / 65536
+print(len(sound[0]))
 sound = sound + 0.5
+print(len(sound[0]))
 target = np.array(sound[0])
 target = target.reshape(1, target.shape[0], target.shape[1])
 print(target.shape)
@@ -64,29 +67,29 @@ kernel_len = 5
 #convolution_layers = count_convolutions(self.audio_shape, self.kernel_size)
 convolution_layers = 3
 
-model.add(Dense(1280 * 16, input_dim=latent_dim))
-model.add(Reshape((1280,16)))
-model.add(BatchNormalization())
-model.add(Activation("selu"))
-for i in range(convolution_layers):
-    model.add(Conv1DTranspose(filters=32, kernel_size=kernel_len, strides = 4, padding="same"))
-    model.add(BatchNormalization())
-    model.add(Activation("selu"))
-model.add(Conv1DTranspose(filters=1, kernel_size=kernel_len, strides = 2, padding="same"))
-model.add(BatchNormalization())
-model.add(Activation("tanh"))
+# model.add(Dense(1280 * 16, input_dim=latent_dim))
+# model.add(Reshape((1280,16)))
+# model.add(BatchNormalization())
+# model.add(Activation("selu"))
+# for i in range(convolution_layers):
+#     model.add(Conv1DTranspose(filters=32, kernel_size=kernel_len, strides = 4, padding="same"))
+#     model.add(BatchNormalization())
+#     model.add(Activation("selu"))
+# model.add(Conv1DTranspose(filters=1, kernel_size=kernel_len, strides = 2, padding="same"))
+# model.add(BatchNormalization())
+# model.add(Activation("sigmoid"))
 
-# model.add(Dense(256, input_dim=latent_dim))
-# model.add(LeakyReLU(alpha=0.2))
-# model.add(BatchNormalization(momentum=0.8))
-# model.add(Dense(512))
-# model.add(LeakyReLU(alpha=0.2))
-# model.add(BatchNormalization(momentum=0.8))
-# model.add(Dense(1024))
-# model.add(LeakyReLU(alpha=0.2))
-# model.add(BatchNormalization(momentum=0.8))
-# model.add(Dense(samples, activation='tanh'))
-# model.add(Reshape([samples,1]))
+model.add(Dense(256, input_dim=latent_dim))
+model.add(LeakyReLU(alpha=0.2))
+model.add(BatchNormalization(momentum=0.8))
+model.add(Dense(512))
+model.add(LeakyReLU(alpha=0.2))
+model.add(BatchNormalization(momentum=0.8))
+model.add(Dense(1024))
+model.add(LeakyReLU(alpha=0.2))
+model.add(BatchNormalization(momentum=0.8))
+model.add(Dense(samples, activation='tanh'))
+model.add(Reshape([samples,1]))
 
 model.summary()
 
@@ -105,9 +108,9 @@ play_and_save_sound(gen_clip, "mimic", "startingnoise")
 model.compile(loss=keras.losses.mean_squared_error,
               optimizer=keras.optimizers.Adam())
 
-for i in range(100):
+for i in range(1000):
     #gen_clip = generator.predict(noise, 1
     print("training: " + str(model.train_on_batch(noise,target)))
-    if i % 5 == 0:
+    if i % 20 == 0:
         gen_clip = generator.predict(noise, 1)
         play_and_save_sound(gen_clip, "mimic", "generated", epoch=i)
