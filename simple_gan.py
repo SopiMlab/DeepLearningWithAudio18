@@ -11,7 +11,7 @@ from keras.models import Sequential, Model
 from keras.optimizers import Adam
 from audio_loader import load_all
 from audio_tools import count_convolutions
-from playsound import play_and_save_sound
+from playsound import play_and_save_sound, save_sound
 
 import sys
 import os
@@ -21,13 +21,14 @@ import numpy as np
 class GAN():
     def __init__(self):
         os.environ["CUDA_VISIBLE_DEVICES"]="0"
-        x_train = load_all("categorized", "chainsaw",forceLoad=True)
+        x_train = load_all("categorized", "cat",forceLoad=True)
         self.X_TRAIN = x_train
         self.samples = x_train.shape[1]
         self.channels = 1
         self.kernel_size = 5
         self.audio_shape = (self.samples, self.channels)
         self.latent_dim = 100
+        self.folder_name = "simplegannormalized"
 
         optimizer = Adam(0.0002, 0.5)
 
@@ -71,7 +72,7 @@ class GAN():
         model.add(BatchNormalization(momentum=0.8))
         model.add(Dense(self.samples))
         model.add(Reshape(self.audio_shape))
-        #model.add(Activation("tanh")) # this should fix the runaway number issue? Oh, but it warps the sound in a stupid way
+        #model.add(Activation("tanh"))
 
         model.summary()
 
@@ -93,6 +94,15 @@ class GAN():
         model.add(Dense(1, activation='sigmoid'))
         model.summary()
 
+        """ model.add(Conv1D(16, kernel_size=kernel_size, activation='selu', strides=2, input_shape=self.audio_shape, padding="same"))
+        for i in range(10):
+            model.add(Conv1D(32, kernel_size=kernel_size, activation='selu', strides=2,padding="same"))
+        model.add(Flatten())
+        model.add(Dropout(0.5))
+        model.add(Dense(32, activation='selu'))
+        model.add(Dropout(0.5))
+        model.add(Dense(1, activation='sigmoid')) """
+
         img = Input(shape=self.audio_shape)
         validity = model(img)
 
@@ -104,9 +114,13 @@ class GAN():
         valid = np.ones((batch_size, 1))
         fake = np.zeros((batch_size, 1))
 
-        X_train = self.X_TRAIN / 32767
+        X_train = self.X_TRAIN / 65536
+        X_train = X_train + 0.5
+        #print(len(sound[0])
 
-        play_and_save_sound(X_train, "simplegan", "reference")
+        save_sound(X_train, self.folder_name, "reference")
+
+        self.sample_clips(-1)
 
         for epoch in range(epochs):
 
@@ -149,11 +163,10 @@ class GAN():
         noise = np.random.normal(0, 1, (r * c, self.latent_dim))
         gen_clips = self.generator.predict(noise)
 
-        play_and_save_sound(gen_clips, "simplegan", "chainsawpic", epoch)
+        save_sound(gen_clips, self.folder_name, "generated", epoch)
         #play a sound
-        print("Play a sound")
 
 
 if __name__ == '__main__':
     gan = GAN()
-    gan.train(epochs=30000, batch_size=32, sample_interval=100)
+    gan.train(epochs=3000, batch_size=32, sample_interval=10)

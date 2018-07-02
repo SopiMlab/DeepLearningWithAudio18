@@ -17,7 +17,7 @@ from keras.optimizers import RMSprop
 from functools import partial
 from audio_loader import load_all
 from audio_tools import count_convolutions
-from playsound import play_and_save_sound
+from playsound import play_and_save_sound, save_sound
 
 import keras.backend as K
 
@@ -64,7 +64,7 @@ class RandomWeightedAverage(_Merge):
 class WGANGP():
     def __init__(self):
         os.environ["CUDA_VISIBLE_DEVICES"]="0"
-        x_train = load_all("categorized", "clapping",forceLoad=True,framerate=32768)
+        x_train = load_all("categorized", "cat",forceLoad=True,framerate=32768)
         self.X_TRAIN = x_train
         self.samples = x_train.shape[1]
         self.channels = 1
@@ -170,17 +170,28 @@ class WGANGP():
         #convolution_layers = count_convolutions(self.audio_shape, self.kernel_size)
         convolution_layers = 3
 
-        model.add(Dense(1280 * 16, input_dim=self.latent_dim))
-        model.add(Reshape((1280,16)))
+        model.add(Dense(80 * dim, input_dim=self.latent_dim))
+        model.add(Reshape((80,dim)))
         model.add(BatchNormalization())
-        model.add(Activation("selu"))
-        for i in range(convolution_layers):
-            model.add(Conv1DTranspose(filters=32, kernel_size=kernel_len, strides = 4, padding="same"))
-            model.add(BatchNormalization())
-            model.add(Activation("selu"))
+        model.add(Activation("relu"))
+        model.add(Conv1DTranspose(filters=16*dim, kernel_size=kernel_len, strides = 4, padding="same"))
+        model.add(BatchNormalization())
+        model.add(Activation("relu"))
+        model.add(Conv1DTranspose(filters=8*dim, kernel_size=kernel_len, strides = 4, padding="same"))
+        model.add(BatchNormalization())
+        model.add(Activation("relu"))
+        model.add(Conv1DTranspose(filters=4*dim, kernel_size=kernel_len, strides = 4, padding="same"))
+        model.add(BatchNormalization())
+        model.add(Activation("relu"))
+        model.add(Conv1DTranspose(filters=2*dim, kernel_size=kernel_len, strides = 4, padding="same"))
+        model.add(BatchNormalization())
+        model.add(Activation("relu"))
+        model.add(Conv1DTranspose(filters=dim, kernel_size=kernel_len, strides = 4, padding="same"))
+        model.add(BatchNormalization())
+        model.add(Activation("relu"))
         model.add(Conv1DTranspose(filters=1, kernel_size=kernel_len, strides = 2, padding="same"))
         model.add(BatchNormalization())
-        model.add(Activation("tanh"))
+        model.add(Activation("sigmoid"))
 
         model.summary()
 
@@ -218,7 +229,8 @@ class WGANGP():
     def train(self, epochs, batch_size, sample_interval=50):
 
         # Load the dataset
-        X_train = self.X_TRAIN / 32767
+        X_train = self.X_TRAIN / 65536
+        X_train = X_train + 0.5
 
         # Adversarial ground truths
         valid = -np.ones((batch_size, 1))
@@ -261,7 +273,7 @@ class WGANGP():
         noise = np.random.normal(0, 0.01, (r * c, self.latent_dim))
         gen_clips = self.generator.predict(noise)
 
-        play_and_save_sound(gen_clips, "wgan", "clap", epoch)
+        save_sound(gen_clips, "wgan", "clap", epoch)
         #play a sound
         print("Play a sound")
 
