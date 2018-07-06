@@ -45,6 +45,7 @@ def play_and_save_sound(samples, label, run_name="", epoch=0, upscale=True):
     new_sound.export("output/" + label + "/" + run_name + "#" + str(epoch) + ".wav", format="wav")
 
 def save_sound(samples, label, run_name="", epoch=0, upscale=True):
+    #sound = AudioSegment.from_file('input/speech_commands/bed/1bb574f9_nohash_0.wav')
     sound = AudioSegment.from_file('input/categorized/clapping/1-94036-A-22.wav')
     sound.set_channels(1)
     check_sample(samples[0])
