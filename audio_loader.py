@@ -3,7 +3,7 @@ from keras.utils import to_categorical
 from pydub import AudioSegment
 import numpy as np
 import array
-from playsound import check_sample
+from playsound import check_sample, update_soundpath
 
 def load_audio(foldername, num_classes = 10, framerate = 0, forceLoad=False, reshape=True):
     folders_dir = "input/" + foldername
@@ -15,6 +15,9 @@ def load_audio(foldername, num_classes = 10, framerate = 0, forceLoad=False, res
         y_train = (soundlibrary['arr_1'])
         x_test = (soundlibrary['arr_2'])
         y_test = (soundlibrary['arr_3'])
+        path = (soundlibrary['arr_4'])
+        print(path)
+        update_soundpath(path)
     else:
         x_train = []
         y_train = []
@@ -45,7 +48,8 @@ def load_audio(foldername, num_classes = 10, framerate = 0, forceLoad=False, res
                 nparray = np.array(soundarray)
                 x_test.append(nparray)
                 y_test.append(i - 1)
-
+        path = folder + wav_fps[0]
+        update_soundpath(path)
         # Get longest clip from the data.
         max = 0
         for x in x_train:
@@ -86,7 +90,7 @@ def load_audio(foldername, num_classes = 10, framerate = 0, forceLoad=False, res
         print("Saving arrays to file")
         if not os.path.exists("input/saved/"):
             os.makedirs("input/saved/")
-        np.savez("input/saved/" + name, x_train,y_train,x_test,y_test)
+        np.savez("input/saved/" + name, x_train,y_train,x_test,y_test, path)
     return (x_train,y_train),(x_test,y_test)
 
 def shuffleLists(a,b):
@@ -104,6 +108,9 @@ def load_all(foldername, categoryname ="",framerate = 0, forceLoad=False, reshap
         print("Library already loaded!")
         soundlibrary = np.load("input/saved/" + name + ".npz")
         x_train = (soundlibrary['arr_0'])
+        path = (soundlibrary['arr_1'])
+        print(path)
+        update_soundpath(path)
     else:
         x_train = []
         wavs = os.listdir(folders_dir)
@@ -117,6 +124,8 @@ def load_all(foldername, categoryname ="",framerate = 0, forceLoad=False, reshap
             nparray = np.array(soundarray)
             x_train.append(nparray)
 
+        path = folders_dir + "/" + wavs[0]
+        update_soundpath(path)
         # Get longest clip from the data.
         max = 0
         for x in x_train:
@@ -143,5 +152,5 @@ def load_all(foldername, categoryname ="",framerate = 0, forceLoad=False, reshap
         print("Saving arrays to file")
         if not os.path.exists("input/saved/"):
             os.makedirs("input/saved/")
-        np.savez("input/saved/" + name, x_train)
+        np.savez("input/saved/" + name, x_train, path)
     return x_train

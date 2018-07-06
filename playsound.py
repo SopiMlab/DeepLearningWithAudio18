@@ -8,10 +8,16 @@ import numpy as np
 import pandas as pd
 
 plt.rcParams['agg.path.chunksize'] = 10000
+soundpath = ''
+
+def update_soundpath(path):
+    global soundpath
+    soundpath = str(path)
+    print("soundpath updated to " + soundpath)
 
 def play_sound(sample, label, upscale=False): # We don't know what the original file was like at this point anymore. AKA length and framerate. This works for now
     #sound = AudioSegment.from_file('input/speech_commands/bed/1bb574f9_nohash_0.wav')
-    sound = AudioSegment.from_file('input/categorized/cat/1-34094-A-5.wav')
+    sound = AudioSegment.from_file(soundpath)
     playsound = sample[0]
     if upscale:
         playsound = upscale_sample(playsound)
@@ -23,7 +29,7 @@ def play_sound(sample, label, upscale=False): # We don't know what the original 
 def play_and_save_sound(samples, label, run_name="", epoch=0, upscale=True):
     check_sample(samples[0])
     #sound = AudioSegment.from_file('input/speech_commands/bed/1bb574f9_nohash_0.wav')
-    sound = AudioSegment.from_file('input/categorized/cat/1-34094-A-5.wav')
+    sound = AudioSegment.from_file(soundpath)
     sound.set_channels(1)
     print(sound.array_type)
     playsound = samples[0]
@@ -46,7 +52,8 @@ def play_and_save_sound(samples, label, run_name="", epoch=0, upscale=True):
 
 def save_sound(samples, label, run_name="", epoch=0, upscale=True):
     #sound = AudioSegment.from_file('input/speech_commands/bed/1bb574f9_nohash_0.wav')
-    sound = AudioSegment.from_file('input/categorized/clapping/1-94036-A-22.wav')
+    global soundpath
+    sound = AudioSegment.from_file(soundpath)
     sound.set_channels(1)
     check_sample(samples[0])
     playsound = samples[0]

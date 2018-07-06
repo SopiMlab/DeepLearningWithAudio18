@@ -40,8 +40,8 @@ class Conv1DTranspose(Layer):
 
 os.environ["CUDA_VISIBLE_DEVICES"]="0"
 latent_dim = 10
-save_folder = "mimic"
-sound = load_all("categorized", "frog",forceLoad=True,framerate=32768)
+save_folder = "mimicspeech"
+sound = load_all("speech_commands", "bed",forceLoad=True,framerate=32768)
 
 save_sound(sound, save_folder, "original", upscale=False)
 #print("hows the sound")
