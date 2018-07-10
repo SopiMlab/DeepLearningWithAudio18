@@ -40,8 +40,8 @@ class Conv1DTranspose(Layer):
 
 os.environ["CUDA_VISIBLE_DEVICES"]="0"
 latent_dim = 10
-save_folder = "mimicspeech"
-sound = load_all("speech_commands", "bed",forceLoad=True,framerate=32768)
+save_folder = "mimicspeechnoisefrog"
+sound = load_all("categorized", "frog",forceLoad=True,framerate=32768)
 
 save_sound(sound, save_folder, "original", upscale=False)
 #print("hows the sound")
@@ -70,7 +70,7 @@ kernel_len = 25
 #convolution_layers = count_convolutions(self.audio_shape, self.kernel_size)
 convolution_layers = 3
 
-model.add(Dense(80 * dim, input_dim=latent_dim))
+""" model.add(Dense(80 * dim, input_dim=latent_dim))
 model.add(Reshape((80,dim)))
 model.add(BatchNormalization())
 model.add(Activation("relu"))
@@ -91,7 +91,7 @@ model.add(BatchNormalization())
 model.add(Activation("relu"))
 model.add(Conv1DTranspose(filters=1, kernel_size=kernel_len, strides = 2, padding="same"))
 model.add(BatchNormalization())
-model.add(Activation("sigmoid"))
+model.add(Activation("sigmoid")) """
 
 # model.add(Dense(160 * 64, activation="relu", input_dim=latent_dim))
 # model.add(Reshape((160, 64)))
@@ -138,17 +138,17 @@ model.add(Activation("sigmoid"))
 # model.add(Conv1D(1, kernel_size=4, padding="same"))
 # model.add(Activation("tanh"))
 
-# model.add(Dense(256, input_dim=latent_dim))
-# model.add(LeakyReLU(alpha=0.2))
-# model.add(BatchNormalization(momentum=0.8))
-# model.add(Dense(512))
-# model.add(LeakyReLU(alpha=0.2))
-# model.add(BatchNormalization(momentum=0.8))
-# model.add(Dense(1024))
-# model.add(LeakyReLU(alpha=0.2))
-# model.add(BatchNormalization(momentum=0.8))
-# model.add(Dense(samples, activation='tanh'))
-# model.add(Reshape([samples,1]))
+model.add(Dense(256, input_dim=latent_dim))
+model.add(LeakyReLU(alpha=0.2))
+model.add(BatchNormalization(momentum=0.8))
+model.add(Dense(512))
+model.add(LeakyReLU(alpha=0.2))
+model.add(BatchNormalization(momentum=0.8))
+model.add(Dense(1024))
+model.add(LeakyReLU(alpha=0.2))
+model.add(BatchNormalization(momentum=0.8))
+model.add(Dense(samples, activation='tanh'))
+model.add(Reshape([samples,1]))
 
 noise = Input(shape=(latent_dim,))
 clip = model(noise)
@@ -167,9 +167,10 @@ model.compile(loss=keras.losses.mean_squared_error,
 
 model.summary()
 
-for i in range(500):
+for i in range(2000):
     #gen_clip = generator.predict(noise, 1
     print("training: " + str(model.train_on_batch(noise,target)))
     if i % 10 == 0:
+        #noise = np.random.normal(0, 1, (1, latent_dim))
         gen_clip = generator.predict(noise, 1)
         save_sound(gen_clip, save_folder, "generated", epoch=i)

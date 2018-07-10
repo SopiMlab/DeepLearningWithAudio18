@@ -50,13 +50,13 @@ def play_and_save_sound(samples, label, run_name="", epoch=0, upscale=True):
     play(new_sound)
     new_sound.export("output/" + label + "/" + run_name + "#" + str(epoch) + ".wav", format="wav")
 
-def save_sound(samples, label, run_name="", epoch=0, upscale=True):
+def save_sound(samples, label, run_name="", epoch=0, upscale=True, index=0):
     #sound = AudioSegment.from_file('input/speech_commands/bed/1bb574f9_nohash_0.wav')
     global soundpath
     sound = AudioSegment.from_file(soundpath)
     sound.set_channels(1)
-    check_sample(samples[0])
-    playsound = samples[0]
+    check_sample(samples[index])
+    playsound = samples[index]
     if upscale:
         playsound = upscale_sample(playsound)
     playsound = np.clip(playsound, -32768,32767)

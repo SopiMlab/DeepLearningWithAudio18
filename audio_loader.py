@@ -56,6 +56,9 @@ def load_audio(foldername, num_classes = 10, framerate = 0, forceLoad=False, res
             if len(x) > max:
                 max = len(x)
 
+        if max < framerate:
+            max = framerate
+
         # Pad data with zeroes so that all clips are the same length for convolution
         new_x_train = []
         for x in x_train:
