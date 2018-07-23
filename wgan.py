@@ -26,6 +26,7 @@ import matplotlib.pyplot as plt
 import sys
 import os
 import keras
+import tensorflow as tf
 
 import numpy as np
 
@@ -137,7 +138,8 @@ class WGANGP():
         valid = self.critic(img)
         # Defines generator model
         self.generator_model = Model(z_gen, valid)
-        self.generator_model.compile(loss=self.wasserstein_loss, optimizer=optimizer)
+        run_opts = tf.RunOptions(report_tensor_allocations_upon_oom = True)
+        self.generator_model.compile(loss=self.wasserstein_loss, optimizer=optimizer, options=run_opts)
 
 
     def gradient_penalty_loss(self, y_true, y_pred, averaged_samples):
@@ -164,23 +166,34 @@ class WGANGP():
     def build_generator(self):
 
         model = Sequential()
-        dim = 64
+        dim = 1
         kernel_len = 25
 
         #convolution_layers = count_convolutions(self.audio_shape, self.kernel_size)
         convolution_layers = 3
 
-        model.add(Dense(1280 * 16, input_dim=self.latent_dim))
-        model.add(Reshape((1280,16)))
+        model.add(Dense(80 * dim, input_dim=self.latent_dim))
+        model.add(Reshape((80,dim)))
         model.add(BatchNormalization())
-        model.add(Activation("selu"))
-        for i in range(convolution_layers):
-            model.add(Conv1DTranspose(filters=32, kernel_size=kernel_len, strides = 4, padding="same"))
-            model.add(BatchNormalization())
-            model.add(Activation("selu"))
+        model.add(Activation("relu"))
+        model.add(Conv1DTranspose(filters=16*dim, kernel_size=kernel_len, strides = 4, padding="same"))
+        model.add(BatchNormalization())
+        model.add(Activation("relu"))
+        model.add(Conv1DTranspose(filters=8*dim, kernel_size=kernel_len, strides = 4, padding="same"))
+        model.add(BatchNormalization())
+        model.add(Activation("relu"))
+        model.add(Conv1DTranspose(filters=4*dim, kernel_size=kernel_len, strides = 4, padding="same"))
+        model.add(BatchNormalization())
+        model.add(Activation("relu"))
+        model.add(Conv1DTranspose(filters=2*dim, kernel_size=kernel_len, strides = 4, padding="same"))
+        model.add(BatchNormalization())
+        model.add(Activation("relu"))
+        model.add(Conv1DTranspose(filters=dim, kernel_size=kernel_len, strides = 4, padding="same"))
+        model.add(BatchNormalization())
+        model.add(Activation("relu"))
         model.add(Conv1DTranspose(filters=1, kernel_size=kernel_len, strides = 2, padding="same"))
         model.add(BatchNormalization())
-        model.add(Activation("tanh"))
+        model.add(Activation("sigmoid")) 
 
         model.summary()
 

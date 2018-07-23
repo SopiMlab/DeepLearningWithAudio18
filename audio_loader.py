@@ -24,6 +24,7 @@ def load_audio(foldername, num_classes = 10, framerate = 0, forceLoad=False, res
         x_test = []
         y_test = []
         category_folds = os.listdir(folders_dir)
+        sound_duration = 0
         for i in range(1,num_classes + 1): #make this more stable, only find folders
             print("Loading soundset number {}".format(i))
             folder = folders_dir + "/" + category_folds[i] + "/"
@@ -35,6 +36,8 @@ def load_audio(foldername, num_classes = 10, framerate = 0, forceLoad=False, res
                 if framerate != 0:
                     #print("I WANT TO STAND OUT AND SHOW YOU THE FRAME RATE: " + str(sound.frame_rate))
                     sound = sound.set_frame_rate(framerate) # check frame rate and do this based on that. Silly to hard code.
+                if(sound_duration == 0):
+                    sound_duration = sound.duration_seconds
                 sound = sound.set_channels(1) 
                 soundarray = sound.get_array_of_samples()
                 nparray = np.array(soundarray)
@@ -56,8 +59,13 @@ def load_audio(foldername, num_classes = 10, framerate = 0, forceLoad=False, res
             if len(x) > max:
                 max = len(x)
 
-        if max < framerate:
-            max = framerate
+        print("{} * {} is {}".format(framerate, sound_duration, framerate * sound_duration))
+        if max <= framerate * sound_duration:
+            if(framerate * sound_duration) % 2 != 0:
+                max = int(framerate * sound_duration + 1)
+            else:
+                max = int(framerate * sound_duration)
+        print("max is {}".format(max))
 
         # Pad data with zeroes so that all clips are the same length for convolution
         new_x_train = []
