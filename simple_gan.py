@@ -21,14 +21,14 @@ import numpy as np
 class GAN():
     def __init__(self):
         os.environ["CUDA_VISIBLE_DEVICES"]="0"
-        x_train = load_all("categorized", "cat",forceLoad=True)
+        x_train = load_all("nsynth", "organ_electronic",forceLoad=True)
         self.X_TRAIN = x_train
         self.samples = x_train.shape[1]
         self.channels = 1
         self.kernel_size = 5
         self.audio_shape = (self.samples, self.channels)
         self.latent_dim = 100
-        self.folder_name = "simplegannormalized"
+        self.folder_name = "simplegannsynth"
 
         optimizer = Adam(0.0002, 0.5)
 

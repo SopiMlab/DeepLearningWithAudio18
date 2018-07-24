@@ -26,7 +26,7 @@ def play_sound(sample, label, upscale=False): # We don't know what the original 
     print("playing sound from category " + str(label))
     play(new_sound)
 
-def play_and_save_sound(samples, label, run_name="", epoch=0, upscale=True):
+def play_and_save_sound(samples, folder, run_name="", epoch=0, upscale=True):
     check_sample(samples[0])
     #sound = AudioSegment.from_file('input/speech_commands/bed/1bb574f9_nohash_0.wav')
     sound = AudioSegment.from_file(soundpath)
@@ -37,20 +37,20 @@ def play_and_save_sound(samples, label, run_name="", epoch=0, upscale=True):
         playsound = upscale_sample(playsound)
     sample_array = array.array(sound.array_type, playsound)
     new_sound = sound._spawn(sample_array)
-    if not os.path.exists("output/" + label + "/"):
-        os.makedirs("output/" + label + "/")
+    if not os.path.exists("output/" + folder + "/"):
+        os.makedirs("output/" + folder + "/")
     #print(sample_array)
     plt.figure(figsize=(30,10))
     plt.ylim(-32768, 32768)
     plt.plot(sample_array)
-    plt.savefig("output/" + label + "/" + run_name + "#" + str(epoch))
+    plt.savefig("output/" + folder + "/" + run_name + "#" + str(epoch))
     plt.clf()
     plt.cla()
-    print("playing and saving sound from category " + str(run_name) + " folder " + label)
+    print("playing and saving sound from category " + str(run_name) + " folder " + folder)
     play(new_sound)
-    new_sound.export("output/" + label + "/" + run_name + "#" + str(epoch) + ".wav", format="wav")
+    new_sound.export("output/" + folder + "/" + run_name + "#" + str(epoch) + ".wav", format="wav")
 
-def save_sound(samples, label, run_name="", epoch=0, upscale=True, index=0):
+def save_sound(samples, folder, run_name="", epoch=0, upscale=True, index=0):
     #sound = AudioSegment.from_file('input/speech_commands/bed/1bb574f9_nohash_0.wav')
     global soundpath
     sound = AudioSegment.from_file(soundpath)
@@ -61,14 +61,15 @@ def save_sound(samples, label, run_name="", epoch=0, upscale=True, index=0):
         playsound = upscale_sample(playsound)
     playsound = np.clip(playsound, -32768,32767)
     check_sample(playsound)
+    print(playsound.shape)
     sample_array = array.array(sound.array_type, playsound)
     new_sound = sound._spawn(sample_array)
-    if not os.path.exists("output/" + label + "/"):
-        os.makedirs("output/" + label + "/")
+    if not os.path.exists("output/" + folder + "/"):
+        os.makedirs("output/" + folder + "/")
     #print(sample_array)
-    filepath = "output/" + label + "/" + run_name + "#" + str(epoch)
+    filepath = "output/" + folder + "/" + run_name + "#" + str(epoch)
     plot_sound(sample_array,filepath)
-    print("saving sound from category " + str(run_name) + " folder " + label)
+    print("saving sound from category " + str(run_name) + " folder " + folder)
     new_sound.export(filepath + ".wav", format="wav")
 
 def plot_sound(sample_array, filepath):
