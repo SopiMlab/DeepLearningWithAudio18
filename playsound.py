@@ -13,7 +13,7 @@ soundpath = ''
 def update_soundpath(path):
     global soundpath
     soundpath = str(path)
-    print("soundpath updated to " + soundpath)
+    #print("soundpath updated to " + soundpath)
 
 def play_sound(sample, label, upscale=False): # We don't know what the original file was like at this point anymore. AKA length and framerate. This works for now
     #sound = AudioSegment.from_file('input/speech_commands/bed/1bb574f9_nohash_0.wav')
@@ -27,7 +27,7 @@ def play_sound(sample, label, upscale=False): # We don't know what the original 
     play(new_sound)
 
 def play_and_save_sound(samples, folder, run_name="", epoch=0, upscale=True):
-    check_sample(samples[0])
+    #check_sample(samples[0])
     #sound = AudioSegment.from_file('input/speech_commands/bed/1bb574f9_nohash_0.wav')
     sound = AudioSegment.from_file(soundpath)
     sound.set_channels(1)
@@ -55,28 +55,36 @@ def save_sound(samples, folder, run_name="", epoch=0, upscale=True, index=0):
     global soundpath
     sound = AudioSegment.from_file(soundpath)
     sound.set_channels(1)
-    check_sample(samples[index])
+    #check_sample(samples[index])
     playsound = samples[index]
     if upscale:
         playsound = upscale_sample(playsound)
     playsound = np.clip(playsound, -32768,32767)
-    check_sample(playsound)
-    print(playsound.shape)
+    #check_sample(playsound)
+    #print(playsound.shape)
     sample_array = array.array(sound.array_type, playsound)
     new_sound = sound._spawn(sample_array)
     if not os.path.exists("output/" + folder + "/"):
         os.makedirs("output/" + folder + "/")
     #print(sample_array)
     filepath = "output/" + folder + "/" + run_name + "#" + str(epoch)
-    plot_sound(sample_array,filepath)
+    notebook_plot_sound(sample_array,filepath) # THIS IS SET TO NOTEBOOK OPTION!!!! WONT SAVE FILES!!
     print("saving sound from category " + str(run_name) + " folder " + folder)
     new_sound.export(filepath + ".wav", format="wav")
+    return filepath + ".wav"
+
+def notebook_plot_sound(sample_array, filepath):
+    plt.figure(figsize=(30,10))
+    plt.ylim(-32768, 32768)
+    plt.plot(sample_array)
+    plt.show()
 
 def plot_sound(sample_array, filepath):
     plt.figure(figsize=(30,10))
     plt.ylim(-32768, 32768)
     plt.plot(sample_array)
     plt.savefig(filepath)
+    plt.show()
     plt.clf()
     plt.cla()
     
