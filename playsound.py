@@ -75,7 +75,8 @@ def save_sound(samples, folder, run_name="", epoch=0, upscale=True, index=0):
 
 def notebook_plot_sound(sample_array, filepath):
     plt.figure(figsize=(30,10))
-    plt.ylim(-32768, 32768)
+    max = check_scale(sample_array)
+    plt.ylim(-max, max)
     plt.plot(sample_array)
     plt.show()
 
