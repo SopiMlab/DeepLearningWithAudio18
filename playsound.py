@@ -85,7 +85,6 @@ def plot_sound(sample_array, filepath):
     plt.ylim(-32768, 32768)
     plt.plot(sample_array)
     plt.savefig(filepath)
-    plt.show()
     plt.clf()
     plt.cla()
     
