@@ -5,6 +5,15 @@ import numpy as np
 import array
 from playsound import check_sample, update_soundpath
 
+# These are tools for loading arbitrary sets of wav files to use with machine learning. It turns wav files into numpy arrays that are good to input into models.
+# Also, saves the numpy arrays on disk, so on the next run it can load the numpy arrays directly without needing to do a lot of conversion work.
+
+#Load audio loads audio from multiple folders and labels them according to the folder name. It does a 80-20 train-test split on the data.
+#Returns 4 arrays:
+# X_train: Array of wav files in sample form as a numpy array. 80% of the data
+# Y_train: Labels for X_Train, to train categorization.
+# X_test: Array of wav files in sample form as a numpy array. 20% of the data
+# Y_test: Labels for X_Test, to test categorization. 
 def load_audio(foldername, num_classes = 10, framerate = 0, forceLoad=False, reshape=True):
     folders_dir = "input/" + foldername
     name = folders_dir[(folders_dir.find("/") + 1):]
@@ -30,7 +39,12 @@ def load_audio(foldername, num_classes = 10, framerate = 0, forceLoad=False, res
             folder = folders_dir + "/" + category_folds[i] + "/"
             wav_fps = os.listdir(folder)
             print("{} sounds in category {}".format(len(wav_fps),category_folds[i]))
-            trainamount = int(len(wav_fps) // 1.25)
+            clipamount = len(wav_fps)
+            if(clipamount > 5000):
+                clipamount = 5000
+                print("limiting to 5000 clips")
+            trainamount = int(clipamount // 1.25)
+            
             for j in range(0,trainamount):
                 sound = AudioSegment.from_wav(folder + wav_fps[j])
                 if framerate != 0:
@@ -43,7 +57,7 @@ def load_audio(foldername, num_classes = 10, framerate = 0, forceLoad=False, res
                 nparray = np.array(soundarray)
                 x_train.append(nparray)
                 y_train.append(i - 1)
-            for j in range(trainamount,len(wav_fps)):
+            for j in range(trainamount,clipamount):
                 sound = AudioSegment.from_wav(folder + wav_fps[j])
                 if framerate != 0:
                     sound = sound.set_frame_rate(framerate) # check frame rate and do this based on that. Silly to hard code.
@@ -104,6 +118,7 @@ def load_audio(foldername, num_classes = 10, framerate = 0, forceLoad=False, res
         np.savez("input/saved/" + name, x_train,y_train,x_test,y_test, path)
     return (x_train,y_train),(x_test,y_test)
 
+# Shuffles two lists so that they still map one-to-one. AKA if the first value of list a is moved to third spot, The first value of list b is also moved to the third spot.
 def shuffleLists(a,b):
     indices = np.arange(a.shape[0])
     np.random.shuffle(indices)
@@ -112,6 +127,7 @@ def shuffleLists(a,b):
     b = b[indices]
     return a,b
 
+#Loads all sounds from one folder. Useful for GANs. Also saves them as a numpy array and writes it to disk for future runs.
 def load_all(foldername, categoryname ="",framerate = 0, forceLoad=False, reshape=True):
     folders_dir = "input/" + foldername + "/" + categoryname
     name = foldername + categoryname

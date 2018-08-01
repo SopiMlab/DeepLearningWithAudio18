@@ -10,7 +10,7 @@ os.environ["CUDA_VISIBLE_DEVICES"]="0"
 
 num_classes = 10
 
-(x_train, y_train), (x_test, y_test) = load_audio("nsynth", num_classes, forceLoad=False, framerate=16384)
+(x_train, y_train), (x_test, y_test) = load_audio("categorized", num_classes, forceLoad=False, framerate=16384)
 
 batch_size = 30
 epochs = 50

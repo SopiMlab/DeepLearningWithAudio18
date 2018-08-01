@@ -71,6 +71,7 @@ class WGANGP():
         self.kernel_size = 5
         self.audio_shape = (self.samples, self.channels)
         self.latent_dim = 100
+        self.folder_name = "wganbatchnorm"
 
         # Following parameter and optimizer set as recommended in paper
         self.n_critic = 5
@@ -229,8 +230,11 @@ class WGANGP():
     def train(self, epochs, batch_size, sample_interval=50):
 
         # Load the dataset
+        #X_train = self.X_TRAIN
         X_train = self.X_TRAIN / 65536
         X_train = X_train + 0.5
+
+        save_sound(X_train, self.folder_name, "reference")
 
         # Adversarial ground truths
         valid = -np.ones((batch_size, 1))
@@ -273,9 +277,7 @@ class WGANGP():
         noise = np.random.normal(0, 0.01, (r * c, self.latent_dim))
         gen_clips = self.generator.predict(noise)
 
-        save_sound(gen_clips, "wgan", "clap", epoch)
-        #play a sound
-        print("Play a sound")
+        save_sound(gen_clips, self.folder_name, "cat", epoch, upscale=True)
 
 
 if __name__ == '__main__':

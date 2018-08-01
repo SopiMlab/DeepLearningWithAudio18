@@ -4,6 +4,8 @@ import os
 
 #sounds_dir, argh = sys.argv[1:2]
 
+#This script sorts the massive NSYNTH dataset (https://magenta.tensorflow.org/datasets/nsynth#files) from one folder to multiple folders based on instrument.
+
 sounds_dir = "audio/"
 
 if not os.path.exists('nsynth/'):
