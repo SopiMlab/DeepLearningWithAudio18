@@ -35,7 +35,7 @@ Put the downloaded tfrecord files in the data folder in the wavegan directory
 
 
 If everything is working correctly, you should start seeing something about Generator Vars.
-![running wavegan, generator vars](images/runwavegan_LI.PNG)
+![running wavegan, generator vars](images/runwavegan_LI.jpg)
 
 If things keep going right what should happen is something like the following. The system finds your GPU, tells something about your device and probably the fans start running as your GPU starts the calculations. 
 ![running wavegan, GPU details](images/waveganrunning.PNG)
@@ -79,24 +79,24 @@ You can now leave the system running and check back after half an hour or so. At
   * This is the reason you need a Mac or Linux to make TFRECORDS, if you solve this, please let us know.
 
 ### Training with your own audio
-NOTE: you need a Mac or Linux machine for this. But you DON’T need a GPU
+NOTE: you need a Mac or Linux machine for this. But you DON’T need a GPU.
 You only need to install Python 3 and any version of tensorflow.
 
-You need as much material as possible from one clear category. You can get some results from around 40 1.5 second clips, but the results are likely better with hundreds or more.
+You need as much material as possible from one clear category. You can get some results from around 40 1.5 second clips, but the results a lot better with hundreds or more.
 
 To run WaveGAN with your own material, you need to separate them into 3 folders, called ‘train’ ‘valid’ and ‘test’. You should separate the audio files so that training has 80% and valid and test have 10 % each. (You can also run this script[Finish the script] to do it automatically.
 
 Be careful that your material doesn’t have any duplicates. If a duplicate ends up both in train and validation, it’s very likely the system will just memorize it, making the results significantly worse.
 
-After the files are separated, you should run this shell script, to turn them into tfrecords:
+After the files are separated, you should run these commands, to turn them into tfrecords:
 
-```python make_tfrecord.py E:/MachineLearning/wavegan/data/church_bells/train E:/MachineLearning/wavegan/data/churchdata/ --name train --ext wav --fs 16000 --nshards 32 --slice_len 1.5```
+```python make_tfrecord.py E:/MachineLearning/wavegan/data/custom/train E:/MachineLearning/wavegan/data/customdata/ --name train --ext wav --fs 16000 --nshards 32 --slice_len 1.5```
 
-```python make_tfrecord.py E:/MachineLearning/wavegan/data/church_bells/valid E:/MachineLearning/wavegan/data/churchdata/ --name valid --ext wav --fs 16000 --nshards 4 --slice_len 1.5```
+```python make_tfrecord.py E:/MachineLearning/wavegan/data/custom/valid E:/MachineLearning/wavegan/data/customdata/ --name valid --ext wav --fs 16000 --nshards 4 --slice_len 1.5```
 
-```python make_tfrecord.py E:/MachineLearning/wavegan/data/church_bells/test E:/MachineLearning/wavegan/data/churchdata/ --name test --ext wav --fs 16000 --nshards 4 --slice_len 1.5```
+```python make_tfrecord.py E:/MachineLearning/wavegan/data/custom/test E:/MachineLearning/wavegan/data/customdata/ --name test --ext wav --fs 16000 --nshards 4 --slice_len 1.5```
 
-Copy this script. Save it as data.sh in the data folder. Change the path to point at your train, valid and test folders. Also, change the second path to point where you want to place the created tfrecords (It should be the same for all three)
+You can copy the three lines and save them as data.sh in the data folder. Change the path to point at your train, valid and test folders. Also, change the second path to point where you want to place the created tfrecords (It should be the same for all three)
 
 Change the nshards value to be the same as the amount of clips in the folder. If you have longer sound files, you can use those too and the system should clip them automatically to correct lengths. 
 
