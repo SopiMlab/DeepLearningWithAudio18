@@ -49,6 +49,9 @@ So any attempted practical application of these systems is likely to be unsucces
 
 * [Magenta](https://magenta.tensorflow.org/) (2017->)
   * [NSynth](https://magenta.tensorflow.org/nsynth) 
+  
+* [Creating sounds for silent videos](http://bvision11.cs.unc.edu/bigpen/yipin/visual2sound_webpage/visual2sound.html) (December 2017)
+  * This one uses SampleRNN and heavily curated Google Audioset to create soundtracks for videos.
 
 * [RunwayML](https://runwayml.com/) (Upcoming)
   * Basically aiming to do what the course is doing. Though even more focus on removing barriers, going as far as not needing to know almost anything about machine learning.
@@ -57,12 +60,12 @@ So any attempted practical application of these systems is likely to be unsucces
 
 * [Placing plausible sounds on a silent video](http://vis.csail.mit.edu/) (April 2016. The system doesn’t create new sounds, it just picks the most appropriate sound from it’s database)
 
-
 ### Datasets
 This is also one huge problem currently. There isn’t many high-quality large audio datasets. Especially for non-music, non-speech sounds, it feels pretty dead.
 
 * [Google AudioSet](https://research.google.com/audioset/)
-  * Is really big and categorized, but the problem is that it’s just 10-second clips of Youtube videos, with the type of sound somewhere in there. And one clip might even multiple types of sound. Good for classification, terrible for generation.
+  * Is really big and categorized, but the problem is that it’s just 10-second clips of Youtube videos, with the type of sound somewhere in there. And one clip might even multiple types of sound. Good for classification, terrible for generation. Also, there's some legal problems of getting just the audio from these videos.
+  * [The VEGAS dataset](http://bvision11.cs.unc.edu/bigpen/yipin/visual2sound_webpage/visual2sound.html) is a human-curated subset of AudioSet that is less noisy and generally better for sound generation tasks.
 
 * [ESC-50](https://github.com/karoldvl/ESC-50)
   * A Dataset of 50-different environmental sounds. It’s main use is benchmarking classification, but it’s one of the only sources of environmental quality sounds currently. The problem is that it’s very small, 40 sounds per category. Makes it tricky to use for generation.
