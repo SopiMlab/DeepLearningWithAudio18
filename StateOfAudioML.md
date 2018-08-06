@@ -70,7 +70,7 @@ This is also one huge problem currently. There isn’t many high-quality large a
 * [The NSynth Dataset](https://magenta.tensorflow.org/datasets/nsynth)
   * Absolutely massive set of 300 000 sound files. It’s basically notes played on different instruments. It’s done with MIDI instruments, so not the most interesting form that sense, but it’s easily big enough for generation too
 
-* [Speech Commands Dataset](https://ai.googleblog.com/2017/08/launching-speech-commands-dataset.html) and SC Zero to Nine Speech Commands(http://deepyeti.ucsd.edu/cdonahue/sc09.tar.gz) 
+* [Speech Commands Dataset](https://ai.googleblog.com/2017/08/launching-speech-commands-dataset.html) and [SC Zero to Nine Speech Commands](http://deepyeti.ucsd.edu/cdonahue/sc09.tar.gz) 
   * There’s multiple datasets for speech commands and they tend to be large and high-quality. Human speech is just not the most interesting thing to generate, but it’ll likely be the baseline for any future systems. 
 
 * [Kaggle audio datasets](https://www.kaggle.com/datasets?search=audio)
