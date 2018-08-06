@@ -1,3 +1,5 @@
+''' This script splits all the files in a folder to folders named 'train', 'valid' and 'test' with a 80-10-10 split.'''
+
 import sys
 import os
 
