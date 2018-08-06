@@ -5,3 +5,8 @@
 - Python scripts for sorting different popular datasets
 
 All of these are meant to work as starting points or aids for audio machine learning, but many of the examples are still very rudimentary and might not produce any meaningful results.
+
+# Tested data sets
+- [ESC-50](https://github.com/karoldvl/ESC-50) (Use ```separate_files.py``` to sort into folders)
+- [The Speech Commands dataset](https://storage.cloud.google.com/download.tensorflow.org/data/speech_commands_v0.02.tar.gz)
+- [NSYNTH dataset](https://magenta.tensorflow.org/datasets/nsynth) (Use ```sort_nsynth.py``` to sort into folders)
