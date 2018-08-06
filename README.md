@@ -1,4 +1,4 @@
-# AudioMNIST
+# MachineLearningWithAudio
 - Tools for loading, playing and plotting audio.
 - Some working simple classifiers
 - Non-working sample-level/raw audio GANs
