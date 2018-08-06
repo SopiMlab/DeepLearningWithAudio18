@@ -5,15 +5,26 @@ import numpy as np
 import array
 from playsound import check_sample, update_soundpath
 
-# These are tools for loading arbitrary sets of wav files to use with machine learning. It turns wav files into numpy arrays that are good to input into models.
-# Also, saves the numpy arrays on disk, so on the next run it can load the numpy arrays directly without needing to do a lot of conversion work.
+''' These are tools for loading arbitrary sets of wav files to use with machine learning. It turns wav files into numpy arrays that are good to input into models.
+ Also, saves the numpy arrays on disk, so on the next run it can load the numpy arrays directly without needing to do a lot of conversion work.
 
-#Load audio loads audio from multiple folders and labels them according to the folder name. It does a 80-20 train-test split on the data.
-#Returns 4 arrays:
-# X_train: Array of wav files in sample form as a numpy array. 80% of the data
-# Y_train: Labels for X_Train, to train categorization.
-# X_test: Array of wav files in sample form as a numpy array. 20% of the data
-# Y_test: Labels for X_Test, to test categorization. 
+Load audio loads audio from multiple folders and labels them according to the folder name. It does a 80-20 train-test split on the data.
+Returns 4 arrays:
+ X_train: Array of wav files in sample form as a numpy array. 80% of the data
+ Y_train: Labels for X_Train, to train categorization.
+ X_test: Array of wav files in sample form as a numpy array. 20% of the data
+ Y_test: Labels for X_Test, to test categorization.
+
+Attributes:
+ foldername: Which folder under input to look into
+ num_classes: How many folders within the main folder do we get examples from
+ framerate: Changes the frame rate of the sound. Not very reliable currently.
+ forceLoad: Do we ignore any previously saved version of the data and reload all of it.
+ reshape: Do we reshape the data so that it fits better in a regular tensor.
+
+ NOTE: The system also pads any sound to the longest length in the set. So try to get sounds of roughly the same length.
+''' 
+
 def load_audio(foldername, num_classes = 10, framerate = 0, forceLoad=False, reshape=True):
     folders_dir = "input/" + foldername
     name = folders_dir[(folders_dir.find("/") + 1):]
@@ -118,7 +129,9 @@ def load_audio(foldername, num_classes = 10, framerate = 0, forceLoad=False, res
         np.savez("input/saved/" + name, x_train,y_train,x_test,y_test, path)
     return (x_train,y_train),(x_test,y_test)
 
-# Shuffles two lists so that they still map one-to-one. AKA if the first value of list a is moved to third spot, The first value of list b is also moved to the third spot.
+'''Shuffles two lists so that they still map one-to-one.
+ So that if the first value of list a is moved to third spot, 
+ The first value of list b is also moved to the third spot.'''
 def shuffleLists(a,b):
     indices = np.arange(a.shape[0])
     np.random.shuffle(indices)
@@ -127,7 +140,18 @@ def shuffleLists(a,b):
     b = b[indices]
     return a,b
 
-#Loads all sounds from one folder. Useful for GANs. Also saves them as a numpy array and writes it to disk for future runs.
+'''Loads all sounds from one specific folder. Useful for GANs. Also saves them as a numpy array and writes it to disk for future runs.
+
+Returns 1 array:
+ X_train: Every sound in the folder as a numpy array file.
+
+Attributes:
+ foldername: Which folder under input to look into
+ categoryname: Which folder from the main folder to load. (if empty just looks at main folder)
+ framerate: Changes the frame rate of the sound. Not very reliable currently.
+ forceLoad: Do we ignore any previously saved version of the data and reload all of it.
+ reshape: Do we reshape the data so that it fits better in a regular tensor.
+''' 
 def load_all(foldername, categoryname ="",framerate = 0, forceLoad=False, reshape=True):
     folders_dir = "input/" + foldername + "/" + categoryname
     name = foldername + categoryname

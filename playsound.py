@@ -1,3 +1,5 @@
+''' Tools for playing and saving sounds. They can play straight from the terminal, or be stored as a waveform graph and wav file.''' 
+
 from pydub import AudioSegment
 from pydub.playback import play
 import matplotlib.pyplot as plt
@@ -10,13 +12,20 @@ import pandas as pd
 plt.rcParams['agg.path.chunksize'] = 10000
 soundpath = ''
 
-# This is a helper function that makes sure that sounds are played at the corret framerate. 
+''' This is a helper function that makes sure that sounds are played at the corret framerate. 
+Attributes:
+ path: Path to a representable sound from the category'''
 def update_soundpath(path):
     global soundpath
     soundpath = str(path)
     #print("soundpath updated to " + soundpath)
 
-# Simple function that just plays any array of samples it is given.
+'''Simple function that just plays any array of samples it is given straight in the terminal.
+Atttributes
+ sample: Array of samples to play
+ label: A name for what type the sound being played is.
+ upscale: Do we scale the sound from a scale of 0 to 1 into a scale of -32768 to 32768. 
+'''
 def play_sound(sample, label, upscale=False): # We don't know what the original file was like at this point anymore. AKA length and framerate. This works for now
     #sound = AudioSegment.from_file('input/speech_commands/bed/1bb574f9_nohash_0.wav')
     sound = AudioSegment.from_file(soundpath)
@@ -28,7 +37,11 @@ def play_sound(sample, label, upscale=False): # We don't know what the original 
     print("playing sound from category " + str(label))
     play(new_sound)
 
-#Plays and saves a sound to disk, both as a plot and a sound file. 
+'''Plays and saves a sound to disk, both as a plot and a sound file. 
+ sample: Array of samples to play
+ label: A name for what type the sound being played is.
+ upscale: Do we scale the sound from a scale of 0 to 1 into a scale of -32768 to 32768. 
+'''
 def play_and_save_sound(samples, folder, run_name="", epoch=0, upscale=True):
     #check_sample(samples[0])
     #sound = AudioSegment.from_file('input/speech_commands/bed/1bb574f9_nohash_0.wav')
@@ -81,6 +94,8 @@ def save_sound(samples, folder, run_name="", epoch=0, upscale=True, index=0):
 def notebook_plot_sound(sample_array, filepath):
     plt.figure(figsize=(30,10))
     max = check_scale(sample_array)
+    plt.ylabel('samples')
+    plt.xlabel('time')
     plt.ylim(-max, max)
     plt.plot(sample_array)
     plt.show()
@@ -88,6 +103,8 @@ def notebook_plot_sound(sample_array, filepath):
 # Plotting function to run in the terminal to save a plot to disk.
 def plot_sound(sample_array, filepath):
     plt.figure(figsize=(30,10))
+    plt.ylabel('samples')
+    plt.xlabel('time')
     plt.ylim(-32768, 32768)
     plt.plot(sample_array)
     plt.savefig(filepath)
