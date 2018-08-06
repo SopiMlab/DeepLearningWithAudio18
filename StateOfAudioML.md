@@ -51,7 +51,7 @@ So any attempted practical application of these systems is likely to be unsucces
   * [NSynth](https://magenta.tensorflow.org/nsynth) 
   
 * [Creating sounds for silent videos](http://bvision11.cs.unc.edu/bigpen/yipin/visual2sound_webpage/visual2sound.html) (December 2017)
-  * This one uses SampleRNN and heavily curated Google Audioset to create soundtracks for videos.
+  * This one uses SampleRNN and heavily curated Google Audioset to create plausible sound effects for videos.
 
 * [RunwayML](https://runwayml.com/) (Upcoming)
   * Basically aiming to do what the course is doing. Though even more focus on removing barriers, going as far as not needing to know almost anything about machine learning.
