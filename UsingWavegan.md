@@ -1,54 +1,65 @@
-Using WaveGAN
+### Using WaveGAN
 NOTE: You need a powerful GPU for this. If you are using Windows and want to use your own sounds, you will need access to to a Linux or Mac.
 
 WaveGAN is a sound generation system that takes in a big library of sounds and learns to create new examples of it. Training this system takes 4-12 hours depending on how powerful GPU you have access to. 
 
 You need to do a lot of installing and things might just break randomly, so prepare to take a few hours just to get things running. 
 
-First, if you don’t have CUDA, cuDNN, Python 3 and tensorflow-gpu installed, you need to install those. Instructions here (When installing CUDA, uncheck Visual Studio Integration, or the installation will fail). 
+First, if you don’t have CUDA, cuDNN, Python 3 and tensorflow-gpu installed, you need to install those. [Instructions here](https://docs.nvidia.com/deeplearning/sdk/cudnn-install/index.html) (When installing CUDA, uncheck Visual Studio Integration, or the installation will fail). 
 
 If you want to keep going without a GPU, you only need to install Python 3 and tensorflow. This is not recommended, training will be very very slow. 
 
-Download wavegan (You can download from the green button on the right. The zip file works fine)
+* Download [wavegan](https://github.com/chrisdonahue/wavegan) (You can download from the green button on the right. The zip file works fine)
 
-After you have it downloaded you need to change one line in the code:
+* After you have it downloaded you need to change one line in the code:
 from train_wavegan.py, change line 2 from
-import cPickle as pickle
+```import cPickle as pickle```
 to
-import pickle
+```import pickle```
 
-Run “pip install tensorflow-gpu==1.8.0” in the terminal (1.9.0 might also work)
-Or if you don’t want to use GPU or don’t have CUDA installed, run “pip install tensorflow==1.8.0”
-Also run “pip install scipy”
-And “pip install matplotlib”
+* Run ```pip install tensorflow-gpu==1.8.0``` in the terminal (1.9.0 might also work)
+Or if you don’t want to use GPU or don’t have CUDA installed, run ```pip install tensorflow==1.8.0```
+* Also run ```pip install scipy```
+* And ```pip install matplotlib```
 
-Try to run the project with just “python train_wavegan.py”. Install the dependencies with pip until you see something like this:
+* Try to run the project with just ```python train_wavegan.py```. Install the dependencies with pip until you see something like this:
+![train.wavegan error](images/trainwavegan.PNG)
 
-
-You need a dataset for training. Wavegan has a few example sets for you to use. They are available here: https://github.com/chrisdonahue/wavegan#build-datasets. You should download one of the ones in the tfrecord-format.
+* You need a dataset for training. Wavegan has a few example sets for you to use. They are available here: https://github.com/chrisdonahue/wavegan#build-datasets. You should download one of the ones in the tfrecord-format.
 Put the downloaded tfrecord files in the data folder in the wavegan directory
 
-When you have your dataset, you only need to run one command to get the system to train:
-“python train_wavegan.py train train/soundname --data_dir data/soundname”
-
+* When you have your dataset, you only need to run one command to get the system to train:
+```python train_wavegan.py train train/soundname --data_dir data/soundname```
+![command](images/command.PNG)
 
 
 
 If everything is working correctly, you should start seeing something about Generator Vars.
-
+![running wavegan, generator vars](images/runwavegan_LI.jpg)
 
 If things keep going right what should happen is something like the following. The system finds your GPU, tells something about your device and probably the fans start running as your GPU starts the calculations. 
+![running wavegan, GPU details](images/waveganrunning.PNG)
+
+
 This seems a bit confusing as it looks like nothing is happening. Actually sounds are being generated. WaveGAN starts spitting out logging files into the train folder and we can look at those with tensorboard.
 
 To launch tensorboard, let’s open a new terminal window, navigate to the wavegan directory and run 
-tensorboard --logdir train
+```tensorboard --logdir train```
+
+![running tensorboard, location and command](images/runtensorboard.PNG)
 
 If this is successful, you should see something like the following:
+
+![running wavegan, url location](images/tensorboardurl.PNG)
 
 Nothing matters except the part highlighted in yellow. This will be where we can look at the log files. (This is also your computer’s official name that you almost never see)
 So, now we need to copy the address, starting at http and paste it in a regular browser. You should see a cheerful orange website with a lot of numbers.
 
+![snippet of the landing page of tensorboard](images/tensorboard.PNG)
+
 There’s a lot of info here and if you are very interested in Machine Learning Theory, you can go look at it. But what we really care about is the Audio tab. Click there and you should see something like:
+
+![snippet of the sound view in tensorboard](images/soundview.PNG)
 
 This is the best way to monitor how the system is doing. While the system is running, it will automatically create audio snapshots of the generation process. 
 
@@ -58,25 +69,34 @@ On the x part is the training material AKA what the system is using to learn wha
 
 You can now leave the system running and check back after half an hour or so. At least the first 500 steps are likely just different kind of buzzing sounds. Around 2000 steps, you should have something noisy, but recognizable. The sounds should keep getting better, possibly for tens of thousands of steps.
 
-Training with your own audio
-NOTE: you need a Mac or Linux machine for this. But you DON’T need a GPU
+## Possible issues
+* ```could not create cudnn handle: CUDNN_STATUS_NOT_INITIALIZED```
+  * This might just randomly happen, it might be caused by running other things that are using your GPU. Or it might be that your GPU drivers are out of date. Try updating your graphics drivers.
+* After running ```python train_wavegan.py …```, everything looks fine, but the system generates no sounds and just stops after a minute or so. It seemingly finishes with the command and then lets you input a new one. 
+  * This usually means that there’s something wrong with your training data. Do you have train, valid and test TFRECORDS-files? Are they in the same folder? Are they more than 0KBs? Did you for sure point the command to the right folder spelled correctly? So, is the part after --data_dir for sure correct?
+
+* ```ImportError: No module named 'tensorflow.contrib.ffmpeg.ops'```
+  * This is the reason you need a Mac or Linux to make TFRECORDS, if you solve this, please let us know.
+
+### Training with your own audio
+NOTE: you need a Mac or Linux machine for this. But you DON’T need a GPU.
 You only need to install Python 3 and any version of tensorflow.
 
-You need as much material as possible from one clear category. You can get some results from around 40 1.5 second clips, but the results are likely better with hundreds or more.
+You need as much material as possible from one clear category. You can get some results from around 40 1.5 second clips, but the results a lot better with hundreds or more.
 
 To run WaveGAN with your own material, you need to separate them into 3 folders, called ‘train’ ‘valid’ and ‘test’. You should separate the audio files so that training has 80% and valid and test have 10 % each. (You can also run this script[Finish the script] to do it automatically.
 
 Be careful that your material doesn’t have any duplicates. If a duplicate ends up both in train and validation, it’s very likely the system will just memorize it, making the results significantly worse.
 
-After the files are separated, you should run this shell script, to turn them into tfrecords:
+After the files are separated, you should run these commands, to turn them into tfrecords:
 
-python make_tfrecord.py E:/MachineLearning/wavegan/data/church_bells/train E:/MachineLearning/wavegan/data/churchdata/ --name train --ext wav --fs 16000 --nshards 32 --slice_len 1.5
+```python make_tfrecord.py E:/MachineLearning/wavegan/data/custom/train E:/MachineLearning/wavegan/data/customdata/ --name train --ext wav --fs 16000 --nshards 32 --slice_len 1.5```
 
-python make_tfrecord.py E:/MachineLearning/wavegan/data/church_bells/valid E:/MachineLearning/wavegan/data/churchdata/ --name valid --ext wav --fs 16000 --nshards 4 --slice_len 1.5
+```python make_tfrecord.py E:/MachineLearning/wavegan/data/custom/valid E:/MachineLearning/wavegan/data/customdata/ --name valid --ext wav --fs 16000 --nshards 4 --slice_len 1.5```
 
-python make_tfrecord.py E:/MachineLearning/wavegan/data/church_bells/test E:/MachineLearning/wavegan/data/churchdata/ --name test --ext wav --fs 16000 --nshards 4 --slice_len 1.5
+```python make_tfrecord.py E:/MachineLearning/wavegan/data/custom/test E:/MachineLearning/wavegan/data/customdata/ --name test --ext wav --fs 16000 --nshards 4 --slice_len 1.5```
 
-Copy this script. Save it as data.sh in the data folder. Change the path to point at your train, valid and test folders. Also, change the second path to point where you want to place the created tfrecords (It should be the same for all three)
+You can copy the three lines and save them as data.sh in the data folder. Change the path to point at your train, valid and test folders. Also, change the second path to point where you want to place the created tfrecords (It should be the same for all three)
 
 Change the nshards value to be the same as the amount of clips in the folder. If you have longer sound files, you can use those too and the system should clip them automatically to correct lengths. 
 
@@ -86,20 +106,10 @@ The amount of files and their sizes can vary a lot. But as long as the TFRECORDs
 
 Then the only thing left is pointing the wavegan train function at this data and letting it run for hours. If you plan to train on a different machine, take these TFRECORD-files (or the whole folder) and move them to machine you intend to train with.
 
-Good data
+## Good data
 Good data comes from multiple different sources. If you have very homogenous data, learning the important characteristics of the sounds you are creating becomes more difficult.
 
 Good data doesn’t have duplicates or very very similar sounds. And if it does, they are not separated across different datasets. So you shouldn’t have KittySaysMeowA.wav in valid, KittySaysMeowB.wav in test and KittySaysMeowC.wav in train. This will make the system memorize how Kitty says meow, instead of how to say meow in general. So if you can, get similar sounds in the same category. (If you used the script, go check that the split makes sense) 
-
-
-Possible issues
-“could not create cudnn handle: CUDNN_STATUS_NOT_INITIALIZED”
-This might just randomly happen, it might be caused by running other things that are using your GPU. Or it might be that your GPU drivers are out of date. Try updating your graphics drivers.
-After running ‘python train_wavegan.py …’, everything looks fine, but the system generates no sounds and just stops after a minute or so. It seemingly finishes with the command and then lets you input a new one. 
-This usually means that there’s something wrong with your training data. Do you have train, valid and test TFRECORDS-files? Are they in the same folder? Are they more than 0KBs? Did you for sure point the command to the right folder spelled correctly? So, is the part after --data_dir for sure correct?
-
-ImportError: No module named 'tensorflow.contrib.ffmpeg.ops'
-This is the reason you need a Mac or Linux to make TFRECORDS, if you solve this, please let us know.
 
 
 
