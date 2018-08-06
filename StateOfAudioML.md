@@ -82,7 +82,7 @@ One fun one is [the BBC sound effect archive.](http://bbcsfx.acropolis.org.uk/)
 ### Other notes
 
 * The audio sample approach is so unexplored that many frameworks don’t even have a Conv1DTranspose-implementation. So people make their own by running it through Conv2DTranspose.
-* The only [audio tutorial(https://www.tensorflow.org/tutorials/sequences/audio_recognition) for Tensorflow is based on spectrograms and only does speech recognition.
+* The only [audio tutorial](https://www.tensorflow.org/tutorials/sequences/audio_recognition) for Tensorflow is based on spectrograms and only does speech recognition.
 ### Other interesting links
 * [Creative.ai](https://medium.com/@creativeai/creativeai-9d4b2346faf3)
   * An organization dedicated to creating interesting creative applications of AI in as many different fields as possible.  
