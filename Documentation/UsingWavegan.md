@@ -108,6 +108,7 @@ You can copy the three lines and save them as data.sh in the data folder. Change
 Change the nshards value to be the same as the amount of clips in the folder. If you have longer sound files, you can use those too and the system should clip them automatically to correct lengths. 
 
 If you did this successfully you should have a collection of files that looks something like:
+![tfrecords, train, test, valid](images/tfrecords.PNG)
 
 The amount of files and their sizes can vary a lot. But as long as the TFRECORDs are not 0KB, you should be good.
 
