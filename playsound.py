@@ -85,7 +85,7 @@ def save_sound(samples, folder, run_name="", epoch=0, upscale=True, index=0):
         os.makedirs("output/" + folder + "/")
     #print(sample_array)
     filepath = "output/" + folder + "/" + run_name + "#" + str(epoch)
-    notebook_plot_sound(sample_array,filepath) # THIS IS SET TO NOTEBOOK OPTION!!!! WONT SAVE FILES!!
+    plot_sound(sample_array,filepath) # THIS IS SET TO NOTEBOOK OPTION!!!! WONT SAVE FILES!!
     print("saving sound from category " + str(run_name) + " folder " + folder)
     new_sound.export(filepath + ".wav", format="wav")
     return filepath + ".wav"
