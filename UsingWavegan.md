@@ -84,7 +84,7 @@ You only need to install Python 3 and any version of tensorflow.
 
 You need as much material as possible from one clear category. You can get some results from around 40 1.5 second clips, but the results a lot better with hundreds or more.
 
-To run WaveGAN with your own material, you need to separate them into 3 folders, called ‘train’ ‘valid’ and ‘test’. You should separate the audio files so that training has 80% and valid and test have 10 % each. (You can also run this script[Finish the script] to do it automatically.
+To run WaveGAN with your own material, you need to separate them into 3 folders, called ‘train’ ‘valid’ and ‘test’. You should separate the audio files so that training has 80% and valid and test have 10 % each. (You can also run the ```splitforwavegan.py``` to do it automatically.)
 
 Be careful that your material doesn’t have any duplicates. If a duplicate ends up both in train and validation, it’s very likely the system will just memorize it, making the results significantly worse.
 
@@ -96,7 +96,7 @@ After the files are separated, you should run these commands, to turn them into 
 
 ```python make_tfrecord.py E:/MachineLearning/wavegan/data/custom/test E:/MachineLearning/wavegan/data/customdata/ --name test --ext wav --fs 16000 --nshards 4 --slice_len 1.5```
 
-You can copy the three lines and save them as data.sh in the data folder. Change the path to point at your train, valid and test folders. Also, change the second path to point where you want to place the created tfrecords (It should be the same for all three)
+You can copy the three lines and save them as data.sh in the data folder. Change the path to point at your train, valid and test folders. Also, change the second path to point where you want to place the created tfrecords (It should be the same for all three). And if you have something other than wav-files, you can try to change the ```--ext wav``` to 'mp3' or some other format.
 
 Change the nshards value to be the same as the amount of clips in the folder. If you have longer sound files, you can use those too and the system should clip them automatically to correct lengths. 
 
