@@ -1,4 +1,6 @@
 ''' This script splits all the files in a folder to folders named 'train', 'valid' and 'test' with a 80-10-10 split.'''
+# Usage is 'splitforwavegan.py input/soundfolder'
+# Needs to point at a directory at input, to prevent accidentally reorganizing files on your computer.
 
 import sys
 import os
@@ -6,7 +8,7 @@ import os
 sounds_dir = sys.argv[1]
 
 if("input" not in sounds_dir):
-    print("invalid path, aborting")
+    print("invalid path, aborting. Destination folder needs to be inside the 'input' folder")
     sys.exit()
 
 files = os.listdir(sounds_dir)
