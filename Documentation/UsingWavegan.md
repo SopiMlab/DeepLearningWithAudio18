@@ -17,19 +17,22 @@ from train_wavegan.py, change line 2 from
 to
 ```import pickle```
 
-* Run ```pip install tensorflow-gpu==1.8.0``` in the terminal (1.9.0 might also work)
-Or if you don’t want to use GPU or don’t have CUDA installed, run ```pip install tensorflow==1.8.0```
+* Locate the wavegan folder and copy the path 
+* Open Terminal and navigate to wavegan-master with for example ```cd Users/Admin/Documents/Github/wavegan-master``` copying your own path after the cd command.
+
+* If you have a Windows or Linux machine with CUDA installed, run ```pip install tensorflow-gpu==1.8.0``` in the terminal (1.9.0 might also work)
+Or if you have a Mac, run ```pip install tensorflow==1.8.0```
 * Also run ```pip install scipy```
 * And ```pip install matplotlib```
 
-* Try to run the project with just ```python train_wavegan.py```. Install the dependencies with pip until you see something like this:
+* Try to run the project with just ```python train_wavegan.py```. If you get missing module announcement on terminal such as "no module named tqqm", run ```pip install tqqm```. Keep doing this until you see something like:
 ![train.wavegan error](images/trainwavegan.PNG)
 
 * You need a dataset for training. Wavegan has a few example sets for you to use. They are available here: https://github.com/chrisdonahue/wavegan#build-datasets. You should download one of the ones in the tfrecord-format.
-Put the downloaded tfrecord files in the data folder in the wavegan directory
+Put the downloaded tfrecord files in the data folder in the wavegan directory.
 
 * When you have your dataset, you only need to run one command to get the system to train:
-```python train_wavegan.py train train/soundname --data_dir data/soundname```
+```python train_wavegan.py train train/piano --data_dir data/piano```
 ![command](images/command.PNG)
 
 
@@ -37,7 +40,7 @@ Put the downloaded tfrecord files in the data folder in the wavegan directory
 If everything is working correctly, you should start seeing something about Generator Vars.
 ![running wavegan, generator vars](images/runwavegan_LI.jpg)
 
-If things keep going right what should happen is something like the following. The system finds your GPU, tells something about your device and probably the fans start running as your GPU starts the calculations. 
+If things keep going right what should happen is something like the following. The system finds your GPU, tells something about your device and probably the fans start running as your GPU starts the calculations. You should see just a blinking bar on the bottom.
 ![running wavegan, GPU details](images/waveganrunning.PNG)
 
 
@@ -67,7 +70,9 @@ In the G_z part is what the system is generating. The latest sound is always the
 
 On the x part is the training material AKA what the system is using to learn what to create. You should check those too to see that your training data makes sense. 
 
-You can now leave the system running and check back after half an hour or so. At least the first 500 steps are likely just different kind of buzzing sounds. Around 2000 steps, you should have something noisy, but recognizable. The sounds should keep getting better, possibly for tens of thousands of steps.
+You can now leave the system running and check back after half an hour or so. At least the first 500 steps are likely just different kind of buzzing sounds. Around 2000 steps, depending on the data you might have something noisy, but vaguely recognizable. The sounds should keep getting better, possibly for tens of thousands of steps. If you are patient enough.
+
+If you want to spot the program, Open Terminal and press Ctrl+C.
 
 ## Possible issues
 * ```could not create cudnn handle: CUDNN_STATUS_NOT_INITIALIZED```
@@ -77,6 +82,8 @@ You can now leave the system running and check back after half an hour or so. At
 
 * ```ImportError: No module named 'tensorflow.contrib.ffmpeg.ops'```
   * This is the reason you need a Mac or Linux to make TFRECORDS, if you solve this, please let us know.
+* ```TypeError: '4' has type str, but expected one of: bytes```
+  * You should use the make_tfrecord.py script that is included in this folder. The original one does not work.
 
 ### Training with your own audio
 NOTE: you need a Mac or Linux machine for this. But you DON’T need a GPU.
@@ -88,7 +95,7 @@ To run WaveGAN with your own material, you need to separate them into 3 folders,
 
 Be careful that your material doesn’t have any duplicates. If a duplicate ends up both in train and validation, it’s very likely the system will just memorize it, making the results significantly worse.
 
-After the files are separated, you should run these commands, to turn them into tfrecords:
+After the files are separated, move them to the wavegan data folder and run these commands, to turn them into tfrecords:
 
 ```python make_tfrecord.py E:/MachineLearning/wavegan/data/custom/train E:/MachineLearning/wavegan/data/customdata/ --name train --ext wav --fs 16000 --nshards 32 --slice_len 1.5```
 
@@ -96,7 +103,7 @@ After the files are separated, you should run these commands, to turn them into 
 
 ```python make_tfrecord.py E:/MachineLearning/wavegan/data/custom/test E:/MachineLearning/wavegan/data/customdata/ --name test --ext wav --fs 16000 --nshards 4 --slice_len 1.5```
 
-You can copy the three lines and save them as data.sh in the data folder. Change the path to point at your train, valid and test folders. Also, change the second path to point where you want to place the created tfrecords (It should be the same for all three). And if you have something other than wav-files, you can try to change the ```--ext wav``` to 'mp3' or some other format.
+You can copy the three lines and save them as data.sh in the data folder. Change the path to point at your train, valid and test folders. Also, change the second path to point where you want to place the created tfrecords (It should be the same for all three). And if you have something other than wav-files, you can try to change the ```--ext wav``` to 'mp3' or some other format. All the files should be the same format.
 
 Change the nshards value to be the same as the amount of clips in the folder. If you have longer sound files, you can use those too and the system should clip them automatically to correct lengths. 
 
@@ -110,6 +117,3 @@ Then the only thing left is pointing the wavegan train function at this data and
 Good data comes from multiple different sources. If you have very homogenous data, learning the important characteristics of the sounds you are creating becomes more difficult.
 
 Good data doesn’t have duplicates or very very similar sounds. And if it does, they are not separated across different datasets. So you shouldn’t have KittySaysMeowA.wav in valid, KittySaysMeowB.wav in test and KittySaysMeowC.wav in train. This will make the system memorize how Kitty says meow, instead of how to say meow in general. So if you can, get similar sounds in the same category. (If you used the script, go check that the split makes sense) 
-
-
-

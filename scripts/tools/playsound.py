@@ -67,7 +67,7 @@ def play_and_save_sound(samples, folder, run_name="", epoch=0, upscale=True):
     new_sound.export("output/" + folder + "/" + run_name + "#" + str(epoch) + ".wav", format="wav")
 
 # Only saves the sound to disk, plotted and as a sound file. 
-def save_sound(samples, folder, run_name="", epoch=0, upscale=True, index=0):
+def save_sound(samples, folder, run_name="", epoch=0, upscale=True, index=0, notebook=False):
     #sound = AudioSegment.from_file('input/speech_commands/bed/1bb574f9_nohash_0.wav')
     global soundpath
     sound = AudioSegment.from_file(soundpath)
@@ -85,7 +85,10 @@ def save_sound(samples, folder, run_name="", epoch=0, upscale=True, index=0):
         os.makedirs("output/" + folder + "/")
     #print(sample_array)
     filepath = "output/" + folder + "/" + run_name + "#" + str(epoch)
-    plot_sound(sample_array,filepath) # THIS IS SET TO NOTEBOOK OPTION!!!! WONT SAVE FILES!!
+    if(notebook):
+        notebook_plot_sound(sample_array,filepath)
+    else:
+        plot_sound(sample_array,filepath)
     print("saving sound from category " + str(run_name) + " folder " + folder)
     new_sound.export(filepath + ".wav", format="wav")
     return filepath + ".wav"
@@ -94,8 +97,8 @@ def save_sound(samples, folder, run_name="", epoch=0, upscale=True, index=0):
 def notebook_plot_sound(sample_array, filepath):
     plt.figure(figsize=(30,10))
     max = check_scale(sample_array)
-    plt.ylabel('samples')
-    plt.xlabel('time')
+    plt.ylabel('Amplitude')
+    plt.xlabel('Time')
     plt.ylim(-max, max)
     plt.plot(sample_array)
     plt.show()
@@ -103,8 +106,8 @@ def notebook_plot_sound(sample_array, filepath):
 # Plotting function to run in the terminal to save a plot to disk.
 def plot_sound(sample_array, filepath):
     plt.figure(figsize=(30,10))
-    plt.ylabel('samples')
-    plt.xlabel('time')
+    plt.ylabel('Amplitude')
+    plt.xlabel('Time')
     plt.ylim(-32768, 32768)
     plt.plot(sample_array)
     plt.savefig(filepath)

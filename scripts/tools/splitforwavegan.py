@@ -7,7 +7,7 @@ import os
 
 sounds_dir = sys.argv[1]
 
-if("input" not in sounds_dir):
+if("input/" not in sounds_dir):
     print("invalid path, aborting. Destination folder needs to be inside the 'input' folder")
     sys.exit()
 

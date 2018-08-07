@@ -25,19 +25,21 @@ Attributes:
  NOTE: The system also pads any sound to the longest length in the set. So try to get sounds of roughly the same length.
 ''' 
 
+inputpath = "../input/"
+
 def load_audio(foldername, num_classes = 10, framerate = 0, forceLoad=False, reshape=True):
-    folders_dir = "input/" + foldername
-    name = folders_dir[(folders_dir.find("/") + 1):]
-    if os.path.isfile("input/saved/" + name + ".npz") and not forceLoad and reshape:
+    folders_dir = inputpath + foldername
+    name = folders_dir[(folders_dir.find("input/") + 6):]
+    #print(name)
+    if os.path.isfile(inputpath + "saved/" + name + ".npz") and not forceLoad and reshape:
         print("Library already loaded!")
-        soundlibrary = np.load("input/saved/" + name + ".npz")
+        soundlibrary = np.load(inputpath + "saved/" + name + ".npz")
         x_train = (soundlibrary['arr_0'])
         y_train = (soundlibrary['arr_1'])
         x_test = (soundlibrary['arr_2'])
         y_test = (soundlibrary['arr_3'])
         path = (soundlibrary['arr_4'])
-        print(path)
-        update_soundpath(path)
+        update_soundpath("../" + str(path))
     else:
         x_train = []
         y_train = []
@@ -124,9 +126,9 @@ def load_audio(foldername, num_classes = 10, framerate = 0, forceLoad=False, res
 
         name = folders_dir[(folders_dir.find("/") + 1):]
         print("Saving arrays to file")
-        if not os.path.exists("input/saved/"):
-            os.makedirs("input/saved/")
-        np.savez("input/saved/" + name, x_train,y_train,x_test,y_test, path)
+        if not os.path.exists(inputpath + "saved/"):
+            os.makedirs(inputpath + "saved/")
+        np.savez(inputpath + "saved/" + name, x_train,y_train,x_test,y_test, path)
     return (x_train,y_train),(x_test,y_test)
 
 '''Shuffles two lists so that they still map one-to-one.
@@ -153,11 +155,11 @@ Attributes:
  reshape: Do we reshape the data so that it fits better in a regular tensor.
 ''' 
 def load_all(foldername, categoryname ="",framerate = 0, forceLoad=False, reshape=True):
-    folders_dir = "input/" + foldername + "/" + categoryname
+    folders_dir = inputpath + foldername + "/" + categoryname
     name = foldername + categoryname
-    if os.path.isfile("input/saved/" + name + ".npz") and not forceLoad and reshape:
+    if os.path.isfile(inputpath + "saved/" + name + ".npz") and not forceLoad and reshape:
         print("Library already loaded!")
-        soundlibrary = np.load("input/saved/" + name + ".npz")
+        soundlibrary = np.load(inputpath + "saved/" + name + ".npz")
         x_train = (soundlibrary['arr_0'])
         path = (soundlibrary['arr_1'])
         print(path)
@@ -201,7 +203,7 @@ def load_all(foldername, categoryname ="",framerate = 0, forceLoad=False, reshap
         #     check_sample(x)
 
         print("Saving arrays to file")
-        if not os.path.exists("input/saved/"):
-            os.makedirs("input/saved/")
-        np.savez("input/saved/" + name, x_train, path)
+        if not os.path.exists(inputpath + "saved/"):
+            os.makedirs(inputpath + "saved/")
+        np.savez(inputpath + "saved/" + name, x_train, path)
     return x_train

@@ -1,3 +1,6 @@
+import sys
+sys.path.insert(0, 'tools')
+
 from audio_loader import load_audio
 from playsound import play_and_save_sound
 

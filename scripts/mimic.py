@@ -1,3 +1,6 @@
+import sys
+sys.path.insert(0, 'tools')
+
 import keras
 from pydub import AudioSegment
 from keras.models import Sequential, Model

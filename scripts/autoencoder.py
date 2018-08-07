@@ -1,3 +1,6 @@
+import sys
+sys.path.insert(0, 'tools')
+
 from keras.layers import Input, Dense, Conv1D, Layer, Lambda, Conv2DTranspose
 from keras.models import Model, Sequential
 import os

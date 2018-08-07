@@ -1,35 +1,32 @@
+import sys
+sys.path.insert(0, 'tools')
+
 from audio_tools import count_convolutions
 from audio_loader import load_audio
 import keras
-from keras.layers import Dense, Dropout, Flatten
+from keras.layers import Dense, Dropout, Flatten, LeakyReLU
 from keras.layers import Conv1D 
-from playsound import save_sound
 
 import os
 os.environ["CUDA_VISIBLE_DEVICES"]="0"
 
 num_classes = 10
 
-(x_train, y_train), (x_test, y_test) = load_audio("categorized", num_classes, forceLoad=False, framerate=16384)
+(x_train, y_train), (x_test, y_test) = load_audio("speech_commands", num_classes)
 
 batch_size = 30
 epochs = 50
 kernel_size = 5
 
-save_sound(x_train, "classification","xtrain",upscale=False)
-save_sound(x_test, "classification","xtest",upscale=False)
-
 input_shape = (x_train.shape[1],1)
 convolution_layers = count_convolutions(input_shape, kernel_size)
 
 model = keras.models.Sequential()
-model.add(Conv1D(16, kernel_size=kernel_size, activation='selu', strides=2, input_shape=input_shape, padding="same"))
-for i in range(convolution_layers):
-    model.add(Conv1D(32, kernel_size=kernel_size, activation='selu', strides=2,padding="same"))
-model.add(Flatten())
-model.add(Dropout(0.5))
-model.add(Dense(32, activation='selu'))
-model.add(Dropout(0.5))
+model.add(Flatten(input_shape=input_shape))
+model.add(Dense(512))
+model.add(LeakyReLU(alpha=0.2))
+model.add(Dense(256))
+model.add(LeakyReLU(alpha=0.2))
 
 model.add(Dense(num_classes, activation='softmax'))
 model.compile(loss=keras.losses.categorical_crossentropy,

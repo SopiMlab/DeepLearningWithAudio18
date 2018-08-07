@@ -1,6 +1,9 @@
 # based on https://github.com/eriklindernoren/Keras-GAN/blob/master/gan/gan.py
 from __future__ import print_function, division
 
+import sys
+sys.path.insert(0, 'tools')
+
 import keras
 from keras.datasets import mnist
 from keras.layers import Input, Dense, Reshape, Flatten, Dropout
@@ -13,7 +16,6 @@ from audio_loader import load_all
 from audio_tools import count_convolutions
 from playsound import play_and_save_sound, save_sound
 
-import sys
 import os
 
 import numpy as np
