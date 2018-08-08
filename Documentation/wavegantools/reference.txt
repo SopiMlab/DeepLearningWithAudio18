@@ -1,0 +1,26 @@
+python3 make_tfrecord2.py \
+	xq122/train \
+	xq122data \
+	--name train \
+	--ext wav \
+	--fs 16000 \
+	--nshards 101a \
+	--slice_len 1.5 \
+
+python3 make_tfrecord2.py \
+	xq122/valid \
+	xq122data \
+	--name valid \
+	--ext wav \
+	--fs 16000 \
+	--nshards 102b \
+	--slice_len 1.5 \
+
+python3 make_tfrecord2.py \
+	xq122/test \
+	xq122data \
+	--name test \
+	--ext wav \
+	--fs 16000 \
+	--nshards 103c \
+	--slice_len 1.5 \

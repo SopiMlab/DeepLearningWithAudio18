@@ -7,8 +7,8 @@ import os
 
 sounds_dir = sys.argv[1]
 
-if("input/" not in sounds_dir):
-    print("invalid path, aborting. Destination folder needs to be inside the 'input' folder")
+if(sounds_dir == ""):
+    print("invalid path, aborting.")
     sys.exit()
 
 files = os.listdir(sounds_dir)
@@ -49,3 +49,18 @@ for j in range(0,int(testamount)):
     i += 1
 
 print(str(i) + " files sorted into train, valid and test")
+
+with open('reference.txt', 'r') as myfile:
+    data=myfile.read()
+
+data = data.replace("xq122",sounds_dir)
+data = data.replace("101a", str(int(trainamount)))
+data = data.replace("102b", str(int(validamount)))
+data = data.replace("103c", str(int(testamount)))
+
+if not os.path.exists(sounds_dir + "data"):
+    os.makedirs(sounds_dir + "data")
+
+text_file = open(sounds_dir + ".sh", "w")
+text_file.write(data)
+text_file.close()
