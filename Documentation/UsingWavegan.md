@@ -89,23 +89,15 @@ If you want to spot the program, Open Terminal and press Ctrl+C.
 NOTE: you need a Mac or Linux machine for this. But you DON’T need a GPU.
 You only need to install Python 3 and any version of tensorflow.
 
-You need as much material as possible from one clear category. You can get some results from around 40 1.5 second clips, but the results a lot better with hundreds or more.
+You need as much material as possible from one clear category. You can get some results from around 40 1.5 second clips, but the results a lot better with hundreds or more. The clips should approximately the same length, but if you don't have a set of of clips of a similar length, you can use the ```split.py``` script for it. It's usage is ```python split.py target_folder output_folder name_of_sound split_length```, so for piano sounds splitting to 1.5 second clips: ```python split.py piano piano_split pianoclip 1.5```
 
-To run WaveGAN with your own material, you need to separate them into 3 folders, called ‘train’ ‘valid’ and ‘test’. You should separate the audio files so that training has 80% and valid and test have 10 % each. (You can also run the ```splitforwavegan.py``` to do it automatically.)
+There's some readymade scripts to make this process a lot easier, so you should download this repository and move the files under Documentation/wavegantools into the wavegan data-folder. Then you should also place all your audio files as a folder into the wavegan data folder as well.
 
-Be careful that your material doesn’t have any duplicates. If a duplicate ends up both in train and validation, it’s very likely the system will just memorize it, making the results significantly worse.
+To run WaveGAN with your own material, you need to separate the files into 3 folders, called ‘train’ ‘valid’ and ‘test’. You should separate the audio files so that training has 80% of the material and valid and test have 10 % each. You can run the ```splitforwavegan.py``` script to do it automatically. Usage is just ```python splitforwavegan.py foldername```.
 
-After the files are separated, move them to the wavegan data folder and run these commands, to turn them into tfrecords:
+After running the splitting script, it should create an sh-script with the name of your folder. (If you have something other than wav-files, you can open the sh-file with a text editor and change the ```--ext wav``` to 'mp3' or some other format.) All the files should be of the same audio format.
 
-```python make_tfrecord.py E:/MachineLearning/wavegan/data/custom/train E:/MachineLearning/wavegan/data/customdata/ --name train --ext wav --fs 16000 --nshards 32 --slice_len 1.5```
-
-```python make_tfrecord.py E:/MachineLearning/wavegan/data/custom/valid E:/MachineLearning/wavegan/data/customdata/ --name valid --ext wav --fs 16000 --nshards 4 --slice_len 1.5```
-
-```python make_tfrecord.py E:/MachineLearning/wavegan/data/custom/test E:/MachineLearning/wavegan/data/customdata/ --name test --ext wav --fs 16000 --nshards 4 --slice_len 1.5```
-
-You can copy the three lines and save them as data.sh in the data folder. Change the path to point at your train, valid and test folders. Also, change the second path to point where you want to place the created tfrecords (It should be the same for all three). And if you have something other than wav-files, you can try to change the ```--ext wav``` to 'mp3' or some other format. All the files should be the same format.
-
-Change the nshards value to be the same as the amount of clips in the folder. If you have longer sound files, you can use those too and the system should clip them automatically to correct lengths. 
+Then you only need to run ```sh foldername.sh``` to turn the audio files into tfrecords. It creates the files into ```foldernamedata```-folder.
 
 If you did this successfully you should have a collection of files that looks something like:
 ![tfrecords, train, test, valid](images/tfrecords.PNG)
