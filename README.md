@@ -1,4 +1,5 @@
 # Machine Learning With Audio
+- Documentation on different Machine Learning Audio systems as well as instructions on using some of them.
 - Tools for loading, playing and plotting audio.
 - Some working simple classifiers
 - Non-working sample-level/raw audio GANs
