@@ -7,20 +7,20 @@ import keras
 from keras.layers import Dense, Dropout, Flatten
 from keras.layers import Conv1D 
 from playsound import save_sound
-
+import numpy as np
 import os
 os.environ["CUDA_VISIBLE_DEVICES"]="0"
 
 num_classes = 10
 
-(x_train, y_train), (x_test, y_test) = load_audio("categorized", num_classes, forceLoad=False, framerate=16384)
+(x_train, y_train), (x_test, y_test) = load_audio("speech_commands", num_classes, forceLoad=False, framerate=16384)
 
 batch_size = 30
 epochs = 50
 kernel_size = 5
 
-save_sound(x_train, "classification","xtrain",upscale=False)
-save_sound(x_test, "classification","xtest",upscale=False)
+#save_sound(x_train, "classification","xtrain",upscale=False)
+#save_sound(x_test, "classification","xtest",upscale=False)
 
 input_shape = (x_train.shape[1],1)
 convolution_layers = count_convolutions(input_shape, kernel_size)
@@ -39,11 +39,11 @@ model.compile(loss=keras.losses.categorical_crossentropy,
               optimizer=keras.optimizers.Adam(),
               metrics=['accuracy'])
 model.summary()
-model.fit(x_train, y_train,
+model.fit(np.expand_dims(x_train, axis=2), y_train,
           batch_size=batch_size,
           epochs=epochs,
           verbose=1,
-          validation_data=(x_test, y_test))
+          validation_data=(np.expand_dims(x_test, axis=2), y_test))
 
 score = model.evaluate(x_test, y_test, verbose=0)
 print('Test loss:', score[0])

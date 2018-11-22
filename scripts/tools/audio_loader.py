@@ -4,6 +4,7 @@ from pydub import AudioSegment
 import numpy as np
 import array
 from playsound import check_sample, update_soundpath
+import ntpath
 
 ''' These are tools for loading arbitrary sets of wav files to use with machine learning. It turns wav files into numpy arrays that are good to input into models.
  Also, saves the numpy arrays on disk, so on the next run it can load the numpy arrays directly without needing to do a lot of conversion work.
@@ -124,7 +125,8 @@ def load_audio(foldername, num_classes = 10, framerate = 0, forceLoad=False, res
         print(x_train.shape[0], 'train samples')
         print(x_test.shape[0], 'test samples')
 
-        name = folders_dir[(folders_dir.find("/") + 1):]
+        #name = folders_dir[(folders_dir.find("/") + 1):]
+        name = ntpath.basename(folders_dir)
         print("Saving arrays to file")
         if not os.path.exists(inputpath + "saved/"):
             os.makedirs(inputpath + "saved/")

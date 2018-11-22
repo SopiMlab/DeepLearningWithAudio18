@@ -2,7 +2,7 @@ import sys
 sys.path.insert(0, 'tools')
 
 import numpy as np
-from audio_loader import load_audio
+from tools.audio_loader import load_audio
 import tensorflow as tf
 
 def next_batch(num, data, labels):
@@ -25,7 +25,7 @@ tfX=tf.placeholder(dtype=tf.float32,shape=[None,x_train.shape[1]])
 tfY=tf.placeholder(dtype=tf.float32,shape=[None,nClasses])
 
 #build model
-layer=tf.layers.dense(tfX,64,activation=tf.nn.selu)
+layer=tf.layers.dense(tfX,64,activation=tf.nn.relu)
 layer=tf.layers.dense(layer,10)
 loss=tf.losses.softmax_cross_entropy(tfY,layer)
 optimizer=tf.train.AdamOptimizer()

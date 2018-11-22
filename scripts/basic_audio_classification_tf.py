@@ -26,11 +26,12 @@ convolution_layers = count_convolutions(x_train.shape, kernel_size)
 print("{} convolution layers".format(convolution_layers))
 
 #declare input placeholders to which to upload data
-tfX=tf.placeholder(dtype=tf.float32,shape=[None,x_train.shape[1],1])
+tfX=tf.placeholder(dtype=tf.float32,shape=[None,x_train.shape[1]])
+tfXReShaped=tf.reshape(tfX,[-1,16000,1])
 tfY=tf.placeholder(dtype=tf.float32,shape=[None,nClasses])
 
 #build model
-layer=tf.layers.conv1d(tfX,16,kernel_size,strides=2,activation=tf.nn.selu)
+layer=tf.layers.conv1d(tfXReShaped,16,kernel_size,strides=2,activation=tf.nn.selu)
 for i in range(convolution_layers):
     layer=tf.layers.conv1d(layer,32,kernel_size,strides=2,activation=tf.nn.selu)
 layer=tf.layers.flatten(layer)
