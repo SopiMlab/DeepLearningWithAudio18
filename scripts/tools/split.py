@@ -21,7 +21,7 @@ print("clip count " + str(len(wav_fps)))
 total_length = 0
 total_clips_to_clip = 0
 for wav in wav_fps:
-    song = AudioSegment.from_wav(sounds_dir + wav)
+    song = AudioSegment.from_wav(os.path.join(sounds_dir,wav))
     total_length += song.duration_seconds
     total_clips_to_clip += song.duration_seconds // split_length
     
@@ -43,11 +43,11 @@ if not os.path.exists(out_dir):
         os.makedirs(out_dir)
 
 for wav_fp in wav_fps:
-    song = AudioSegment.from_wav(sounds_dir + wav_fp)
+    song = AudioSegment.from_wav(os.path.join(sounds_dir,wav_fp))
     while song.duration_seconds > split_length:
         clip = song[:seconds]
         song = song[seconds:]
-        clip.export((out_dir + name + str(i) + ".wav"), format='wav')
+        clip.export((os.path.join(out_dir, name + str(i) + ".wav")), format='wav')
         i += 1
 
 print(str(i) + " files splat")
