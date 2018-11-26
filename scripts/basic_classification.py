@@ -11,12 +11,13 @@ import numpy as np
 import os
 os.environ["CUDA_VISIBLE_DEVICES"]="0"
 
-num_classes = 10
+num_classes = 2
+model_savepath = "saved_model"
 
-(x_train, y_train), (x_test, y_test) = load_audio("speech_commands", num_classes, forceLoad=False, framerate=16384)
+(x_train, y_train), (x_test, y_test) = load_audio("beatles", num_classes, forceLoad=False, framerate=16384)
 
 batch_size = 30
-epochs = 50
+epochs = 20
 kernel_size = 5
 
 #save_sound(x_train, "classification","xtrain",upscale=False)
@@ -39,12 +40,21 @@ model.compile(loss=keras.losses.categorical_crossentropy,
               optimizer=keras.optimizers.Adam(),
               metrics=['accuracy'])
 model.summary()
-model.fit(np.expand_dims(x_train, axis=2), y_train,
+#model.fit(np.expand_dims(x_train, axis=2), y_train,
+#          batch_size=batch_size,
+#          epochs=epochs,
+#          verbose=1,
+#          validation_data=(np.expand_dims(x_test, axis=2), y_test))
+model.fit(x_train, y_train,
           batch_size=batch_size,
           epochs=epochs,
           verbose=1,
-          validation_data=(np.expand_dims(x_test, axis=2), y_test))
+          validation_data=(x_test, y_test))
 
 score = model.evaluate(x_test, y_test, verbose=0)
+
 print('Test loss:', score[0])
 print('Test accuracy:', score[1])
+
+model.save(model_savepath)
+print('model saved to ', model_savepath)
