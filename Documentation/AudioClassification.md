@@ -42,7 +42,7 @@ Where `dataset_folder` is the folder you just created that contains all the trai
 
 If everything is working correctly, you should start seeing something lie this:
 
-![running wavegan, generator vars](images/runclassification.jpg)
+![running wavegan, generator vars](images/trainclassification.PNG)
 
 When the training is done, you should see the training result in the terminal. The trained model will be saved as a file with the name you specified before.
 
