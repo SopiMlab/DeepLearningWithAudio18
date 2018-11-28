@@ -1,4 +1,4 @@
-### Using WaveGAN
+## Training WaveGAN
 NOTE: You need a powerful GPU for this. If you are using Windows and want to use your own sounds, you will need access to to a Linux or Mac.
 
 WaveGAN is a sound generation system that takes in a big library of sounds and learns to create new examples of it. Training this system takes 4-12 hours depending on how powerful GPU you have access to. 
@@ -74,6 +74,19 @@ You can now leave the system running and check back after half an hour or so. At
 
 If you want to spot the program, Open Terminal and press Ctrl+C.
 
+## Generate audios using WaveGAN
+The training process will save the trained model during the training as checkpoint file. You can use the WaveGAN to generate new sounds if you already have a trained model. The steps are instructed as followed:
+
+1. Copy the script `preview.py` we made for previewing from this repository under folder `Documentation/wavegantools/`
+2. Open Terminal and navigate to your WaveGAN repository's root directory. Run the following command to generate preview audios. For example, if we want to use the model named piano1 that is trained to generate piano, with input noise range from -1 and 1, the command should be as following:
+```
+python preview.py train/piano/piano1 --noise_max 1 --noise_min -1
+```
+Note that a checkpoint usually contains couple of files as below, you should only use the name without extensions for the command above.
+![checkpoint name](images/waveganmodels.PNG)
+
+3. The generated audios will be located under a folder called `preview/`, which is in the folder of your checkpoint.
+
 ## Possible issues
 * ```could not create cudnn handle: CUDNN_STATUS_NOT_INITIALIZED```
   * This might just randomly happen, it might be caused by running other things that are using your GPU. Or it might be that your GPU drivers are out of date. Try updating your graphics drivers.
@@ -85,7 +98,7 @@ If you want to spot the program, Open Terminal and press Ctrl+C.
 * ```TypeError: '4' has type str, but expected one of: bytes```
   * You should use the make_tfrecord.py script that is included in this folder. The original one does not work.
 
-### Training with your own audio
+## Training with your own audio
 NOTE: you need a Mac or Linux machine for this. But you DON’T need a GPU.
 You only need to install Python 3 and any version of tensorflow.
 
