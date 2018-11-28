@@ -26,9 +26,9 @@ Attributes:
  NOTE: The system also pads any sound to the longest length in the set. So try to get sounds of roughly the same length.
 ''' 
 
-inputpath = "../input/"
 
-def load_audio(foldername, num_classes = 10, framerate = 0, forceLoad=False, reshape=True):
+
+def load_audio(foldername, num_classes = 10, framerate = 0, forceLoad=False, reshape=True,inputpath = "../input/", amount_limit = 5000):
     folders_dir = inputpath + foldername
     name = folders_dir[(folders_dir.find("input/") + 6):]
     #print(name)
@@ -50,13 +50,13 @@ def load_audio(foldername, num_classes = 10, framerate = 0, forceLoad=False, res
         sound_duration = 0
         for i in range(1,num_classes + 1): #make this more stable, only find folders
             print("Loading soundset number {}".format(i))
-            folder = folders_dir + "/" + category_folds[i] + "/"
+            folder = folders_dir + "/" + category_folds[i-1] + "/"
             wav_fps = os.listdir(folder)
-            print("{} sounds in category {}".format(len(wav_fps),category_folds[i]))
+            print("{} sounds in category {}".format(len(wav_fps),category_folds[i-1]))
             clipamount = len(wav_fps)
-            if(clipamount > 5000):
-                clipamount = 5000
-                print("limiting to 5000 clips")
+            if(clipamount > amount_limit):
+                clipamount = amount_limit
+                print("limiting to "+  str(amount_limit)+" clips")
             trainamount = int(clipamount // 1.25)
             
             for j in range(0,trainamount):
@@ -75,6 +75,7 @@ def load_audio(foldername, num_classes = 10, framerate = 0, forceLoad=False, res
                 sound = AudioSegment.from_wav(folder + wav_fps[j])
                 if framerate != 0:
                     sound = sound.set_frame_rate(framerate) # check frame rate and do this based on that. Silly to hard code.
+                sound = sound.set_channels(1) 
                 soundarray = sound.get_array_of_samples()
                 nparray = np.array(soundarray)
                 x_test.append(nparray)
@@ -114,7 +115,8 @@ def load_audio(foldername, num_classes = 10, framerate = 0, forceLoad=False, res
         y_test = to_categorical(y_test) # just give them without setting them one-hot.
 
         x_train, y_train = shuffleLists(x_train, y_train)
-        x_test, y_test = shuffleLists(x_train, y_train)
+        #x_test, y_test = shuffleLists(x_train, y_train)
+        x_test, y_test = shuffleLists(x_test, y_test)
 
         if(reshape):
             x_train = x_train.reshape(x_train.shape[0], x_train.shape[1], 1)
@@ -122,6 +124,8 @@ def load_audio(foldername, num_classes = 10, framerate = 0, forceLoad=False, res
 
         print('x_train shape:', x_train.shape)
         print('y_train shape:', y_train.shape)
+        print('x_test shape:', x_test.shape)
+        print('y_test shape:', y_test.shape)
         print(x_train.shape[0], 'train samples')
         print(x_test.shape[0], 'test samples')
 
@@ -156,7 +160,7 @@ Attributes:
  forceLoad: Do we ignore any previously saved version of the data and reload all of it.
  reshape: Do we reshape the data so that it fits better in a regular tensor.
 ''' 
-def load_all(foldername, categoryname ="",framerate = 0, forceLoad=False, reshape=True):
+def load_all(foldername, categoryname ="",framerate = 0, forceLoad=False, reshape=True,inputpath = "../input/",save_array_to_file = False):
     folders_dir = inputpath + foldername + "/" + categoryname
     name = foldername + categoryname
     if os.path.isfile(inputpath + "saved/" + name + ".npz") and not forceLoad and reshape:
@@ -203,9 +207,53 @@ def load_all(foldername, categoryname ="",framerate = 0, forceLoad=False, reshap
 
         # for x in x_train:
         #     check_sample(x)
-
-        print("Saving arrays to file")
-        if not os.path.exists(inputpath + "saved/"):
-            os.makedirs(inputpath + "saved/")
-        np.savez(inputpath + "saved/" + name, x_train, path)
+        if save_array_to_file:
+            print("Saving arrays to file")
+            if not os.path.exists(inputpath + "saved/"):
+                os.makedirs(inputpath + "saved/")
+            np.savez(inputpath + "saved/" + name, x_train, path)
     return x_train
+
+
+def segments2array(segments_list, framerate = 0, reshape=True):
+    """
+    convert a list of AudioSegment to a multi dimensional data array that can feed into neural network
+    Returns 1 array:
+     data_array: Every sound in the segments_list as a numpy array file.
+
+    Attributes:
+     segments_list: list of AudioSegments to be converted
+     framerate: Changes the frame rate of the sound. Not very reliable currently.
+     reshape: Do we reshape the data so that it fits better in a regular tensor.
+    """
+    data_array = []
+    for sound in segments_list:
+        if framerate != 0:
+            sound = sound.set_frame_rate(framerate) # check frame rate and do this based on that. Silly to hard code.
+            #sprint("I WANT TO STAND OUT AND SHOW YOU THE FRAME RATE: " + str(sound.frame_rate*sound.duration_seconds))
+        sound = sound.set_channels(1) 
+        soundarray = sound.get_array_of_samples()
+        nparray = np.array(soundarray)
+        data_array.append(nparray)
+
+    # Get longest clip from the data.
+    max = 0
+    for x in data_array:
+        if len(x) > max:
+            max = len(x)
+
+    # Pad data with zeroes so that all clips are the same length for convolution
+    new_data_array = []
+    for x in data_array:
+        if len(x) < max:
+            x = np.pad(x, (0, max-len(x)), mode='constant')
+        new_data_array.append(x)
+    data_array = np.array(new_data_array)
+
+    if(reshape):
+        data_array = data_array.reshape(data_array.shape[0], data_array.shape[1], 1)
+
+    #print('data shape:', data_array.shape)
+    #print(data_array.shape[0], 'data samples')
+
+    return data_array    
