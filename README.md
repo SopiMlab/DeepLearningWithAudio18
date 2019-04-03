@@ -5,7 +5,7 @@ DOM-E5129 - Intelligent Computational Media
 <!-- ## State of Audio Deep Learning -->
 
 
-### State of audio generation in Deep Learning (August 2018)
+### State of audio generation in Deep Learning (December 2018)
 Speech and music (MIDI) generation are doing well, however the methods that work well with images don’t translate that well to the audio domain. Turning sounds to spectrograms and different signal processing algorithms make it possible to use image models, but the results tend to be a bit underwhelming and the sound quality is bad.
 
 [A blog post going deeper into why this is the case.](https://towardsdatascience.com/whats-wrong-with-spectrograms-and-cnns-for-audio-processing-311377d7ccd)
