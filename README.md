@@ -110,7 +110,7 @@ These are documentation files that are readable withing Github. Just click one a
 * ```UsingWavegan.md``` is a step-by-step guide on how to use [WaveGAN](https://github.com/chrisdonahue/wavegan).
 * ```wavegantools``` is a folder for useful scripts to use with WaveGAN.
 * ```images``` are just the images used in the documentation.
--->
+
 
 
 
@@ -131,3 +131,5 @@ All of these are meant to work as starting points or aids for audio machine lear
 - [NSYNTH dataset](https://magenta.tensorflow.org/datasets/nsynth) (Use ```sort_nsynth.py``` to sort into folders)
 
 The loader assumes that any data is put into a folder called input. You should create one and put any audio you have in organized folders within.
+
+-->
