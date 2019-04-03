@@ -2,7 +2,7 @@
 
 / DOM-E5129 - Intelligent Computational Media
 
-## State of Audio Deep Learning
+<!-- ## State of Audio Deep Learning -->
 
 
 ### State of audio generation in Deep Learning (August 2018)
@@ -102,7 +102,7 @@ One fun one is [the BBC sound effect archive.](http://bbcsfx.acropolis.org.uk/)
   * A collection of Interactive Machine learning examples running on Google CoLab (with free GPUs)
 
 
---------------------------------------------------------------------------------------------------
+<!-- --------------------------------------------------------------------------------------------------
 
 These are documentation files that are readable withing Github. Just click one and read.
 
@@ -110,3 +110,4 @@ These are documentation files that are readable withing Github. Just click one a
 * ```UsingWavegan.md``` is a step-by-step guide on how to use [WaveGAN](https://github.com/chrisdonahue/wavegan).
 * ```wavegantools``` is a folder for useful scripts to use with WaveGAN.
 * ```images``` are just the images used in the documentation.
+-->
