@@ -106,7 +106,7 @@ You need as much material as possible from one clear category. You can get some 
 
 There's some readymade scripts to make this process a lot easier, so you should download this repository and move the files under Documentation/wavegantools into the wavegan data-folder. Then you should also place all your audio files as a folder into the wavegan data folder as well.
 
-The audio clips should be approximately the same length, but if you don't have a set of of clips of a similar length, you can use the ```split.py``` script for it. It's usage is ```python split.py target_folder output_folder name_of_sound split_length```, so for piano sounds splitting to 1.5 second clips: ```python split.py piano piano_split pianoclip 1.5```
+The audio clips should be approximately the same length, but if you don't have a set of of clips of a similar length, you can use the ```splitwg.py``` script for it. It's usage is ```python splitwg.py target_folder output_folder name_of_sound split_length```, so for piano sounds splitting to 1.5 second clips: ```python splitwg.py piano piano_split pianoclip 1.5```
 
 To run WaveGAN with your own material, you need to separate the files into 3 folders, called ‘train’ ‘valid’ and ‘test’. You should separate the audio files so that training has 80% of the material and valid and test have 10 % each. You can run the ```splitforwavegan.py``` script to do it automatically. For the piano example usage is just ```python splitforwavegan.py piano_split```.
 
