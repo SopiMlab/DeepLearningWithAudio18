@@ -43,7 +43,7 @@ If you get missing Python module announcement on terminal during any step below,
 
   If everything is working correctly, you should start seeing something lie this:
 
-  ![running wavegan, generator vars](images/trainclassification.PNG)
+  ![running wavegan, generator vars](../images/trainclassification.PNG)
 
   When the training is done, you should see the training result in the terminal. The trained model will be saved as a file with the name you specified before.
 
