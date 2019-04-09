@@ -26,22 +26,22 @@ Or if you have a Mac, run ```pip install tensorflow==1.8.0```
 * And ```pip install matplotlib```
 
 * Try to run the project with just ```python train_wavegan.py```. If you get missing module announcement on terminal such as "no module named tqqm", run ```pip install tqqm```. Keep doing this until you see something like:
-![train.wavegan error](images/trainwavegan.PNG)
+![train.wavegan error](../images/trainwavegan.PNG)
 
 * You need a dataset for training. Wavegan has a few example sets for you to use. They are available here: https://github.com/chrisdonahue/wavegan#build-datasets. You should download one of the ones in the tfrecord-format.
 Put the downloaded tfrecord files in the data folder in the wavegan directory.
 
 * When you have your dataset, you only need to run one command to get the system to train:
 ```python train_wavegan.py train train/piano --data_dir data/piano```
-![command](images/command.PNG)
+![command](../images/command.PNG)
 
 
 
 If everything is working correctly, you should start seeing something about Generator Vars.
-![running wavegan, generator vars](images/runwavegan_LI.jpg)
+![running wavegan, generator vars](../images/runwavegan_LI.jpg)
 
 If things keep going right what should happen is something like the following. The system finds your GPU, tells something about your device and probably the fans start running as your GPU starts the calculations. You should see just a blinking bar on the bottom.
-![running wavegan, GPU details](images/waveganrunning.PNG)
+![running wavegan, GPU details](../images/waveganrunning.PNG)
 
 
 This seems a bit confusing as it looks like nothing is happening. Actually sounds are being generated. WaveGAN starts spitting out logging files into the train folder and we can look at those with tensorboard.
@@ -49,20 +49,20 @@ This seems a bit confusing as it looks like nothing is happening. Actually sound
 To launch tensorboard, let’s open a new terminal window, navigate to the wavegan directory and run 
 ```tensorboard --logdir train```
 
-![running tensorboard, location and command](images/runtensorboard.PNG)
+![running tensorboard, location and command](../images/runtensorboard.PNG)
 
 If this is successful, you should see something like the following:
 
-![running wavegan, url location](images/tensorboardurl.PNG)
+![running wavegan, url location](../images/tensorboardurl.PNG)
 
 Nothing matters except the part highlighted in yellow. This will be where we can look at the log files. (This is also your computer’s official name that you almost never see)
 So, now we need to copy the address, starting at http and paste it in a regular browser. You should see a cheerful orange website with a lot of numbers.
 
-![snippet of the landing page of tensorboard](images/tensorboard.PNG)
+![snippet of the landing page of tensorboard](../images/tensorboard.PNG)
 
 There’s a lot of info here and if you are very interested in Machine Learning Theory, you can go look at it. But what we really care about is the Audio tab. Click there and you should see something like:
 
-![snippet of the sound view in tensorboard](images/soundview.PNG)
+![snippet of the sound view in tensorboard](../images/soundview.PNG)
 
 This is the best way to monitor how the system is doing. While the system is running, it will automatically create audio snapshots of the generation process. 
 
@@ -83,7 +83,7 @@ The training process will save the trained model during the training as checkpoi
 python preview.py train/piano/piano1 --noise_max 1 --noise_min -1
 ```
 Note that a checkpoint usually contains couple of files as below, you should only use the name without extensions for the command above.
-![checkpoint name](images/waveganmodels.PNG)
+![checkpoint name](../images/waveganmodels.PNG)
 
 3. The generated audios will be located under a folder called `preview/`, which is in the folder of your checkpoint.
 
@@ -115,7 +115,7 @@ After running the splitting script, it should create an sh-script with the name 
 Then you only need to run ```sh piano_split.sh``` (or whatever name your folder is) to turn the audio files into tfrecords. It creates the files into ```piano_splitdata```-folder in this case.
 
 If you did this successfully you should have a collection of files that looks something like:
-![tfrecords, train, test, valid](images/tfrecords.PNG)
+![tfrecords, train, test, valid](../images/tfrecords.PNG)
 
 The amount of files and their sizes can vary a lot. But as long as the TFRECORDs are not 0KB, you should be good.
 
