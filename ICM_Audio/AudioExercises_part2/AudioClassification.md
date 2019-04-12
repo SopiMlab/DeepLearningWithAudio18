@@ -39,7 +39,7 @@ If you get missing Python module announcement on terminal during any step below,
    ```
    python basic_classification.py dataset_folder number_of_classes model_save_name training_epoch batch_size sample_limit
    ```
-   Where `dataset_folder` is the folder you just created that contains all the training data, `number_of_classes` is how many classes to train(less or equal to the category number your dataset contains),`model_save_name` is the name to save the trained model, `training_epoch` is how long to train, `batch_size` is the mini batch size for training(128 is usually good), and sample_limit is how many audio clips for each category will be used for training at most.
+   Where `dataset_folder` is the folder you just created that contains all the training data, `number_of_classes` is how many classes to train(less or equal to the category number your dataset contains),`model_save_name` is the name to save the trained model, `training_epoch` is how long to train, `batch_size` is the mini batch size for training(128 is usually good), and `sample_limit` is how many audio clips for each category will be used for training at most.
 
   If everything is working correctly, you should start seeing something lie this:
 
