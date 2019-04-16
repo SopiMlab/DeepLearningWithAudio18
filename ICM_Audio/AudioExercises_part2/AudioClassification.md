@@ -39,11 +39,11 @@ If you get missing Python module announcement on terminal during any step below,
    ```
    python basic_classification.py dataset_folder number_of_classes model_save_name training_epoch batch_size sample_limit
    ```
-   Where `dataset_folder` is the folder you just created that contains all the training data, `number_of_classes` is how many classes to train(less or equal to the category number your dataset contains),`model_save_name` is the name to save the trained model, `training_epoch` is how long to train, `batch_size` is the mini batch size for training(128 is usually good), and sample_limit is how many audio clips for each category will be used for training at most.
+   Where `dataset_folder` is the folder you just created that contains all the training data, `number_of_classes` is how many classes to train(less or equal to the category number your dataset contains),`model_save_name` is the name to save the trained model, `training_epoch` is how long to train, `batch_size` is the mini batch size for training(128 is usually good), and `sample_limit` is how many audio clips for each category will be used for training at most.
 
   If everything is working correctly, you should start seeing something lie this:
 
-  ![running wavegan, generator vars](images/trainclassification.PNG)
+  ![running wavegan, generator vars](../images/trainclassification.PNG)
 
   When the training is done, you should see the training result in the terminal. The trained model will be saved as a file with the name you specified before.
 
